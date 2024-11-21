@@ -1,0 +1,10 @@
+openapi: 3.0.0 # defining the version of the OpenAPI I'm using
+info:
+  title: 'CW2 Coursework' # Title of the API
+  description: 'Trail Service Mircoservice' # Description of the API
+  version: '1.0.0' # Version of the API
+
+# Defining the servers where the API is hosted
+servers:
+  - url: 'http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson/'
+    description: 'UoPNet Server'
