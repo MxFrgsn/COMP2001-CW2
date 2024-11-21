@@ -1,41 +1,70 @@
-openapi: 3.0.0 # defining the version of the OpenAPI I'm using
+openapi: 3.0.0
 info:
-  title: 'CW2 Coursework' # Title of the API
-  description: 'Trail Service Mircoservice' # Description of the API
-  version: '1.0.0' # Version of the API
+  title: 'CW2 Coursework'
+  description: 'Trail Service Microservice'
+  version: '1.0.0'
 
-# Defining the servers where the API is hosted
 servers:
   - url: 'http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson/'
     description: 'UoP Web Server'
 
-  components:
+components:
   schemas:
     Trail:
-      type: 'object'
+      type: object
       required:
         - trail_id
+        - trail_name
       properties:
         trail_id:
-          type: 'string'
+          type: string
           description: 'Unique identifier for the trail'
         trail_name:
-          type: 'string'
-          description: 'name for trail'
-  parameters: # change this -> what is this parameter for
-    last_name:
-      name: 'last_name'
+          type: string
+          description: 'Name of the trail'
+        difficulty:
+          type: string
+          description: 'Difficulty level of the trail'
+          enum: ['easy', 'moderate', 'hard']
+        length:
+          type: number
+          format: float
+          description: 'Length of the trail in kilometers'
+        traffic:
+          type: string
+          description: 'Expected traffic on the trail'
+          enum: ['light', 'moderate', 'heavy']
+  parameters:
+    trail_id:
+      name: 'trail_id'
       in: 'query'
-      description: 'Last name of the person'
-      required: true
+      description: 'Name of the trail to search for'
+      required: True
       schema:
-        type: 'string'
+        type: string
 
 paths:
-  /example:
+  /trails:
     get:
-      summary: Example endpoint
+      operationId: 'trail.read_all'
+      tags:
+        - 'trails'
+      summary: Get a list of trails
       responses:
         '200':
-          description: Successful response
-  
+          description: Successfully retrieved list of trails
+        '400':
+          description: Request failed, please retry.
+  /trails/{trail_id}:
+    get:
+      operationId: 'trail.read_one'
+      tags:
+        - 'trails'
+      summary: Get one trail by ID
+      parameters:
+        - $ref: '#/components/parameters/trail_id'
+      responses:
+        '200':
+          description: Successful response, Trail exists
+        '404':
+          description: Trail not found

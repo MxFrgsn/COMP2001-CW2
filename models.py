@@ -2,27 +2,6 @@
 from marshmallow_sqlalchemy import fields
 from marshmallow import validates, ValidationError
 from config import db, ma
-
-class User(db.Model):
-    __tablename__ = 'User'
-    __table_args__ = {'schema': 'CW2'}
-    user_id = db.Column(db.String, primary_key=True)
-    username = db.Column(db.String, nullable=False) 
-    email = db.Column(db.String, nullable=False) 
-    password = db.Column(db.String, nullable=False)    
-    
-    @validates('email')
-    def validate_email(self, value):
-        if '@' not in value:
-            raise ValidationError('Invalid email address')
-        return value
-    
-    @validates('password')
-    def validate_password(self, value):
-        if len(value) < 8:
-            raise ValidationError('Password must be at least 8 characters')
-        return value
-
 class Trail(db.Model):
     __tablename__ = 'Trail'
     __table_args__ = {'schema': 'CW2'}
@@ -97,6 +76,25 @@ class Trail(db.Model):
             raise ValidationError('Invalid route type')
         return value
     
+class User(db.Model):
+    __tablename__ = 'User'
+    __table_args__ = {'schema': 'CW2'}
+    user_id = db.Column(db.String, primary_key=True)
+    username = db.Column(db.String, nullable=False) 
+    email = db.Column(db.String, nullable=False) 
+    password = db.Column(db.String, nullable=False)    
+    
+    @validates('email')
+    def validate_email(self, value):
+        if '@' not in value:
+            raise ValidationError('Invalid email address')
+        return value
+    
+    @validates('password')
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise ValidationError('Password must be at least 8 characters')
+        return value
 
 class Trail_Ownership(db.Model):
     __tablename__ = 'Trail_Ownership'
