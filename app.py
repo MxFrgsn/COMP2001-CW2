@@ -15,6 +15,6 @@ if __name__ == '__main__':
 
 # need to comment current code
 # now run notebook for sql code
-# include validation to ensure its in time format HH:MM in models.py
+# then test app.py -> see if works and then work on trail.py and swagger.yml in tandem
 # create sql trigger or python function to ensure IDs for each table are unique automatically
 # find out if theres online databaes to go through countries,counties and cities as locations.
