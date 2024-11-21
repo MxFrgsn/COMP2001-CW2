@@ -1,6 +1,7 @@
+# app.py
 from flask import Flask, render_template
 import config
-from models import User, Trail, Trail_Feature, Feature, Location
+from models import User, Trail, Trail_Attraction, Attraction, Location
 
 app = config.connex_app
 app.add_api(config.basedir / 'swagger.yml') 

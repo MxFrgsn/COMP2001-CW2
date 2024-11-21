@@ -7,4 +7,35 @@ info:
 # Defining the servers where the API is hosted
 servers:
   - url: 'http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson/'
-    description: 'UoPNet Server'
+    description: 'UoP Web Server'
+
+  components:
+  schemas:
+    Trail:
+      type: 'object'
+      required:
+        - trail_id
+      properties:
+        trail_id:
+          type: 'string'
+          description: 'Unique identifier for the trail'
+        trail_name:
+          type: 'string'
+          description: 'name for trail'
+  parameters: # change this -> what is this parameter for
+    last_name:
+      name: 'last_name'
+      in: 'query'
+      description: 'Last name of the person'
+      required: true
+      schema:
+        type: 'string'
+
+paths:
+  /example:
+    get:
+      summary: Example endpoint
+      responses:
+        '200':
+          description: Successful response
+  

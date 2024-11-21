@@ -1,3 +1,4 @@
+# models.py
 from marshmallow_sqlalchemy import fields
 from marshmallow import validates, ValidationError
 from config import db, ma
@@ -5,7 +6,7 @@ from config import db, ma
 class User(db.Model):
     __tablename__ = 'User'
     __table_args__ = {'schema': 'CW2'}
-    user_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String, primary_key=True)
     username = db.Column(db.String, nullable=False) 
     email = db.Column(db.String, nullable=False) 
     password = db.Column(db.String, nullable=False)    
@@ -99,34 +100,18 @@ class Trail(db.Model):
 
 class Trail_Ownership(db.Model):
     __tablename__ = 'Trail_Ownership'
-    __table_args__ = (
-    db.PrimaryKeyConstraint('user_id', 'trail_id', name='pk_trail_ownership'),
-    {'schema': 'CW2'}  
-    )
-    user_id = db.Column(db.Integer, db.ForeignKey('CW2.User.user_id'), nullable=False)
-    trail_id = db.Column(db.Integer, db.ForeignKey('CW2.Trail.trail_id'), nullable=False)
+    __table_args__ = ({'schema': 'CW2'})
+    user_id = db.Column(db.String, db.ForeignKey('CW2.User.user_id'), nullable=False, primary_key=True)
+    trail_id = db.Column(db.String, db.ForeignKey('CW2.Trail.trail_id'), nullable=False,primary_key=True)
 
     user = db.relationship('User', backref=db.backref('owned_trails', lazy=True))
     trail = db.relationship('Trail', backref=db.backref('trail_owners', lazy=True))
 
-class Trail_Attraction(db.Model):
-    __tablenmae__ = 'Trail_Attraction'
-    _table_args__ = (
-    db.PrimaryKeyConstraint
-    ('attraction_id', 'trail_id', name='pk_trail_Attraction'),
-    {'schema': 'CW2'} 
-    )
-    attraction_id = db.Column(db.Integer, db.ForeignKey('CW2.User.user_id'), nullable=False)
-    trail_id = db.Column(db.Integer, db.ForeignKey('CW2.Trail.trail_id'), nullable=False)
-
-    Attraction = db.relationship('Attraction', backref=db.backref('Attractions_on_trails', lazy=True))
-    trail = db.relationship('Trail', backref=db.backref('trail_Attractions', lazy=True))
-
 class Attraction(db.Model):
-    __tablenmae__ = 'Attraction'
-    _table_args__ = {'schema': 'CW2'}
-    attraction_id = db.Column(db.Integer, primary_key=True)
-    Attraction = db.Column(db.String, nullable=False)
+    __tablename__ = 'Attraction'
+    __table_args__ = {'schema': 'CW2'}
+    attraction_id = db.Column(db.String, primary_key=True)
+    attraction_name = db.Column(db.String, nullable=False)
 
     @validates('attraction_id')
     def validate_attraction_id(self, value):
@@ -146,10 +131,18 @@ class Attraction(db.Model):
             raise ValidationError('Attraction must be at least 3 characters')
         return value
     
+class Trail_Attraction(db.Model):
+    __tablename__ = 'Trail_Attraction'
+    __table_args__ = ({'schema': 'CW2'})
+    attraction_id = db.Column(db.String, db.ForeignKey('CW2.Attraction.attraction_id'), nullable=False,primary_key=True)
+    trail_id = db.Column(db.String, db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
+
+    Attraction = db.relationship('Attraction', backref=db.backref('trail_attractions', lazy=True))
+    trail = db.relationship('Trail', backref=db.backref('trail_attractions', lazy=True))
 
 class Location(db.Model): # can i access a valid location from an avaliable database?
-    __tablenmae__ = 'Location'
-    _table_args__ = {'schema': 'CW2'}
+    __tablename__ = 'Location'
+    __table_args__ = {'schema': 'CW2'}
     location_id = db.Column(db.Integer, primary_key=True)
     country = db.Column(db.String, nullable=False)
     county = db.Column(db.String, nullable=False)
