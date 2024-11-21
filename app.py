@@ -13,4 +13,8 @@ def home():
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=8000,debug=True)
 
-    
+# need to go through models.py and ensure validation is correct 
+# and convert to sql in sql.ipynb
+# need to comment current code
+# include validation to ensure its in time format HH:MM in models.py
+# create sql trigger or python function to ensure IDs for each table are unique automatically

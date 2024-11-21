@@ -5,18 +5,19 @@ from config import db, ma
 class Trail(db.Model):
     __tablename__ = 'Trail'
     __table_args__ = {'schema': 'CW2'}
-    trail_id = db.Column(db.String, primary_key=True)  # needs validation, same for user id, location id and Attraction id 
+    trail_id = db.Column(db.String, primary_key=True) 
+    location_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False)   
     trail_name = db.Column(db.String, nullable=False) 
-    trail_summary = db.Column(db.String, nullable=False)
-    trail_description = db.Column(db.String, nullable=False)
-    difficulty = db.Column(db.String, nullable=False)
+    summary = db.Column(db.String, nullable=False)
+    description = db.Column(db.String, nullable=False)
     traffic = db.Column(db.String, nullable=False)
-    location_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False)  
+    difficulty = db.Column(db.String, nullable=False)
     length = db.Column(db.Float, nullable=False)
     duration = db.Column(db.Float, nullable=False)
+    elevation_gain = db.Column(db.Int, nullable=False)
     route_type = db.Column(db.String, nullable=False)
 
-    @validates('trail_id')
+    @validates('trail_id') # need to do this with 
     def validate_trail_id(self, value):
         acronym = value.substring(0, 3)
         numbers = value.substring(3, 8)
@@ -30,21 +31,27 @@ class Trail(db.Model):
     
     @validates('trail_name')
     def validate_trail_name(self, value):
-        if len(value) < 50:
+        if len(value) < 3:
             raise ValidationError('Trail name must be at least 3 characters')
+        if len(value) > 50:
+            raise ValidationError('Trail name must be at less than 50 characters')
         return value
 
-    @validates('trail_summary')
+    @validates('summary')
     def validate_trail_summary(self, value):
-        if len(value) < 100:
-            raise ValidationError('Trail summary must be at least 50 characters')
+        if len(value) < 50:
+            raise ValidationError('Trail summary must be at least 50')
+        if len(value) > 200:
+            raise ValidationError('Trail summary must be at less than 200 characters')
         return value
     
-    @validates('trail_description')
+    @validates('description')
     def validate_trail_description(self, value):
         if len(value) < 100:
             raise ValidationError('Trail description must be at least 100 characters')
-        return value
+        if len(value) > 1500:
+            raise ValidationError('Trail description must be at less than 1500 characters') 
+        return value 
     
     @validates('traffic')
     def validate_traffic(self, value):
@@ -59,22 +66,34 @@ class Trail(db.Model):
         return value
     
     @validates('length')
-    def validate_length(self, value):
-        if value < 0:
+    def validate_length(self, value): # must ensure its in km and has two decimal places
+        if value < 0.00:
             raise ValidationError('Length must be positive')
+        if value > 99999.99:
+            raise ValidationError('Length must be less than 99999.99')
         return value
 
     @validates('duration')
     def validate_duration(self, value):
         if value < 0:
             raise ValidationError('Duration must be positive')
-        return value
+        return value # include validation to ensure its in time format HH:MM
 
+    @validates('elevation_gain') # must ensure its in meters
+    def validate_elevation_gain(self, value): 
+        if value < 0:
+            raise ValidationError('Elevation gain must be positive')
+        if value > 9999:
+            raise ValidationError('Elevation gain must be less than 9999')
+        return value
+    
     @validates('route_type')
     def validate_route_type(self, value):
         if value not in ['loop', 'out and back', 'point to point']:
             raise ValidationError('Invalid route type')
         return value
+    
+
     
 class User(db.Model):
     __tablename__ = 'User'
@@ -83,18 +102,52 @@ class User(db.Model):
     username = db.Column(db.String, nullable=False) 
     email = db.Column(db.String, nullable=False) 
     password = db.Column(db.String, nullable=False)    
+    role = db.Column(db.String, nullable=False)
+    
+    @validates('user_id')
+    def validate_user_id(self, value):
+        acronym = value.substring(0, 3)
+        numbers = value.substring(3, 8)
+        if len(value) != 8:
+            raise ValidationError('User ID must be 8 characters long')
+        if acronym!= 'USR':
+            raise ValidationError('User ID must start with USR')
+        if numbers.isdigit() == False:
+            raise ValidationError('User ID must end with 5 numbers')
+        return value
+    
+    @validates('username')
+    def validate_username(self, value):
+        if len(value) < 3:
+            raise ValidationError('Username must be at least 3 characters')
+        if len(value) > 255:
+            raise ValidationError('Username must be at less than 255 characters')
+        return value
     
     @validates('email')
     def validate_email(self, value):
-        if '@' not in value:
+        if '@' not in value and '.' not in value:
             raise ValidationError('Invalid email address')
+        if len(value) < 3:
+            raise ValidationError('Email must be at least 3 characters')
+        if len(value) > 255:
+            raise ValidationError('Email must be at less than 255 characters')
         return value
     
     @validates('password')
     def validate_password(self, value):
         if len(value) < 8:
             raise ValidationError('Password must be at least 8 characters')
+        if len(value) > 255:
+            raise ValidationError('Password must be at less than 255 characters')
         return value
+    
+    @validates('role')
+    def validate_role(self, value):
+        if value not in ['admin', 'user']:
+            raise ValidationError('Invalid role')
+        return value
+    
 
 class Trail_Ownership(db.Model):
     __tablename__ = 'Trail_Ownership'
@@ -117,7 +170,7 @@ class Attraction(db.Model):
         numbers = value.substring(3, 8)
         if len(value) != 8:
             raise ValidationError('Attraction ID must be 8 characters long')
-        if acronym!= 'TRL':
+        if acronym!= 'ATT':
             raise ValidationError('Attraction ID must start with FET')
         if numbers.isdigit() == False:
             raise ValidationError('Attraction ID must end with 5 numbers')
@@ -127,6 +180,8 @@ class Attraction(db.Model):
     def validate_Attraction(self, value):
         if len(value) < 3:
             raise ValidationError('Attraction must be at least 3 characters')
+        if len(value) > 50:
+            raise ValidationError('Attraction must be at less than 50 characters')
         return value
     
 class Trail_Attraction(db.Model):
@@ -152,7 +207,7 @@ class Location(db.Model): # can i access a valid location from an avaliable data
         numbers = value.substring(3, 8)
         if len(value) != 8:
             raise ValidationError('Location ID must be 8 characters long')
-        if acronym!= 'TRL':
+        if acronym!= 'LOC':
             raise ValidationError('Location ID must start with LOC')
         if numbers.isdigit() == False:
             raise ValidationError('Location ID must end with 5 numbers')
