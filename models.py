@@ -2,6 +2,45 @@
 from marshmallow_sqlalchemy import fields
 from marshmallow import validates, ValidationError
 from config import db, ma
+
+class Location(db.Model): # can i access a valid location from an avaliable database?
+    __tablename__ = 'Location'
+    __table_args__ = {'schema': 'CW2'}
+    location_id = db.Column(db.Integer, primary_key=True)
+    country = db.Column(db.String, nullable=False)
+    county = db.Column(db.String, nullable=False)
+    city = db.Column(db.String, nullable=False)
+
+    @validates('location_id')
+    def validate_location_id(self, value):
+        acronym = value.substring(0, 3)
+        numbers = value.substring(3, 8)
+        if len(value) != 8:
+            raise ValidationError('Location ID must be 8 characters long')
+        if acronym!= 'LOC':
+            raise ValidationError('Location ID must start with LOC')
+        if numbers.isdigit() == False:
+            raise ValidationError('Location ID must end with 5 numbers')
+        return value
+    
+    @validates('country')
+    def validate_country(self, value):
+        if len(value) < 3:
+            raise ValidationError('Country must be at least 3 characters')
+        return value
+    
+    @validates('county')
+    def validate_county(self, value):
+        if len(value) < 3:
+            raise ValidationError('County must be at least 3 characters')
+        return value
+    
+    @validates('city')
+    def validate_city(self, value):
+        if len(value) < 3:
+            raise ValidationError('City must be at least 3 characters')
+        value = round(value, 2)
+        return value
 class Trail(db.Model):
     __tablename__ = 'Trail'
     __table_args__ = {'schema': 'CW2'}
@@ -17,7 +56,7 @@ class Trail(db.Model):
     elevation_gain = db.Column(db.Int, nullable=False)
     route_type = db.Column(db.String, nullable=False)
 
-    @validates('trail_id') # need to do this with 
+    @validates('trail_id') 
     def validate_trail_id(self, value):
         acronym = value.substring(0, 3)
         numbers = value.substring(3, 8)
@@ -66,7 +105,7 @@ class Trail(db.Model):
         return value
     
     @validates('length')
-    def validate_length(self, value): # must ensure its in km and has two decimal places
+    def validate_length(self, value): # Must ensure its in km
         if value < 0.00:
             raise ValidationError('Length must be positive')
         if value > 99999.99:
@@ -75,11 +114,14 @@ class Trail(db.Model):
 
     @validates('duration')
     def validate_duration(self, value):
-        if value < 0:
-            raise ValidationError('Duration must be positive')
-        return value # include validation to ensure its in time format HH:MM
+        hours, minutes = map(int, value.split(':'))
+        if hours < 0 or hours > 23:
+            raise ValidationError('Hours must be between 00 and 23')
+        if minutes < 0 or minutes > 59:
+            raise ValidationError('Minutes must be between 00 and 59')
+        return value 
 
-    @validates('elevation_gain') # must ensure its in meters
+    @validates('elevation_gain') # Must ensure its in meters
     def validate_elevation_gain(self, value): 
         if value < 0:
             raise ValidationError('Elevation gain must be positive')
@@ -92,8 +134,6 @@ class Trail(db.Model):
         if value not in ['loop', 'out and back', 'point to point']:
             raise ValidationError('Invalid route type')
         return value
-    
-
     
 class User(db.Model):
     __tablename__ = 'User'
@@ -148,7 +188,6 @@ class User(db.Model):
             raise ValidationError('Invalid role')
         return value
     
-
 class Trail_Ownership(db.Model):
     __tablename__ = 'Trail_Ownership'
     __table_args__ = ({'schema': 'CW2'})
@@ -192,44 +231,6 @@ class Trail_Attraction(db.Model):
 
     Attraction = db.relationship('Attraction', backref=db.backref('trail_attractions', lazy=True))
     trail = db.relationship('Trail', backref=db.backref('trail_attractions', lazy=True))
-
-class Location(db.Model): # can i access a valid location from an avaliable database?
-    __tablename__ = 'Location'
-    __table_args__ = {'schema': 'CW2'}
-    location_id = db.Column(db.Integer, primary_key=True)
-    country = db.Column(db.String, nullable=False)
-    county = db.Column(db.String, nullable=False)
-    city = db.Column(db.String, nullable=False)
-
-    @validates('location_id')
-    def validate_location_id(self, value):
-        acronym = value.substring(0, 3)
-        numbers = value.substring(3, 8)
-        if len(value) != 8:
-            raise ValidationError('Location ID must be 8 characters long')
-        if acronym!= 'LOC':
-            raise ValidationError('Location ID must start with LOC')
-        if numbers.isdigit() == False:
-            raise ValidationError('Location ID must end with 5 numbers')
-        return value
-    
-    @validates('country')
-    def validate_country(self, value):
-        if len(value) < 3:
-            raise ValidationError('Country must be at least 3 characters')
-        return value
-    
-    @validates('county')
-    def validate_county(self, value):
-        if len(value) < 3:
-            raise ValidationError('County must be at least 3 characters')
-        return value
-    
-    @validates('city')
-    def validate_city(self, value):
-        if len(value) < 3:
-            raise ValidationError('City must be at least 3 characters')
-        return value
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
