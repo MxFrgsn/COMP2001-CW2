@@ -53,7 +53,7 @@ class Trail(db.Model):
     difficulty = db.Column(db.String, nullable=False)
     length = db.Column(db.Float, nullable=False)
     duration = db.Column(db.Float, nullable=False)
-    elevation_gain = db.Column(db.Int, nullable=False)
+    elevation_gain = db.Column(db.Integer, nullable=False)
     route_type = db.Column(db.String, nullable=False)
 
     @validates('trail_id') 
