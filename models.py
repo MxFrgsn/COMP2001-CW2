@@ -188,7 +188,7 @@ class User(db.Model):
             raise ValidationError('Invalid role')
         return value
     
-class Trail_Ownership(db.Model):
+class TrailOwnership(db.Model):
     __tablename__ = 'Trail_Ownership'
     __table_args__ = ({'schema': 'CW2'})
     user_id = db.Column(db.String, db.ForeignKey('CW2.User.user_id'), nullable=False, primary_key=True)
@@ -223,7 +223,7 @@ class Attraction(db.Model):
             raise ValidationError('Attraction must be at less than 50 characters')
         return value
     
-class Trail_Attraction(db.Model):
+class TrailAttraction(db.Model):
     __tablename__ = 'Trail_Attraction'
     __table_args__ = ({'schema': 'CW2'})
     attraction_id = db.Column(db.String, db.ForeignKey('CW2.Attraction.attraction_id'), nullable=False,primary_key=True)
@@ -246,7 +246,7 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
 class TrailOwnershipSchema(ma.SQLAlchemyAutoSchema):
     owner = fields.Nested(UserSchema)  
     class Meta:
-        model = Trail_Ownership
+        model = TrailOwnership
         load_instance = True
         sqla_session = db.session
 

@@ -2,7 +2,7 @@ def create():
     return "Trail created"
 
 def read_one(trail_id): 
-    return "Trail read"
+    return trail_id
 
 def read_all():
     return "read all Trails"
