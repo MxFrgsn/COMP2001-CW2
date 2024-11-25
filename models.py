@@ -1,5 +1,5 @@
 # models.py
-from marshmallow_sqlalchemy import fields
+from marshmallow import fields
 from marshmallow import validates, ValidationError
 from config import db, ma
 
@@ -13,8 +13,8 @@ class Location(db.Model): # can i access a valid location from an avaliable data
 
     @validates('location_id')
     def validate_location_id(self, value):
-        acronym = value.substring(0, 3)
-        numbers = value.substring(3, 8)
+        acronym = value[0:3]
+        numbers = value[3:8]
         if len(value) != 8:
             raise ValidationError('Location ID must be 8 characters long')
         if acronym!= 'LOC':
@@ -47,8 +47,8 @@ class Trail(db.Model):
     trail_id = db.Column(db.String, primary_key=True) 
     location_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False)  
     owner_id = db.Column(db.String, db.ForeignKey('CW2.User.user_id'), nullable=False)  
-    trail_name = db.Column(db.String, nullable=False) 
-    summary = db.Column(db.String, nullable=False)
+    trail_name = db.Column(db.String, nullable=False, Unique=True) 
+    summary = db.Column(db.String)
     description = db.Column(db.String)
     traffic = db.Column(db.String, nullable=False)
     difficulty = db.Column(db.String, nullable=False)
@@ -63,11 +63,19 @@ class Trail(db.Model):
     location_pt_3 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
     location_pt_4 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
     location_pt_5 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+
+    location = db.relationship("Location", backref="trails")
+    owner = db.relationship("User", backref="trails")
+    location_point_1 = db.relationship("LocationPoint", foreign_keys=[location_pt_1])
+    location_point_2 = db.relationship("LocationPoint", foreign_keys=[location_pt_2])
+    location_point_3 = db.relationship("LocationPoint", foreign_keys=[location_pt_3])
+    location_point_4 = db.relationship("LocationPoint", foreign_keys=[location_pt_4])
+    location_point_5 = db.relationship("LocationPoint", foreign_keys=[location_pt_5])
     
     @validates('trail_id') 
     def validate_trail_id(self, value):
-        acronym = value.substring(0, 3)
-        numbers = value.substring(3, 8)
+        acronym = value[0:3]
+        numbers = value[3:8]
         if len(value) != 8:
             raise ValidationError('Trail ID must be 8 characters long')
         if acronym!= 'TRL':
@@ -86,7 +94,7 @@ class Trail(db.Model):
 
     @validates('summary')
     def validate_trail_summary(self, value):
-        if len(value) < 10:
+        if len(value) < 10 & len(value)!=0:
             raise ValidationError('Trail summary must be at least 50')
         if len(value) > 255:
             raise ValidationError('Trail summary must be at less than 200 characters')
@@ -94,7 +102,7 @@ class Trail(db.Model):
     
     @validates('description')
     def validate_trail_description(self, value):
-        if len(value) < 100:
+        if len(value) < 100 & len(value)!=0:
             raise ValidationError('Trail description must be at least 100 characters')
         if len(value) > 1500:
             raise ValidationError('Trail description must be at less than 1500 characters') 
@@ -158,8 +166,8 @@ class User(db.Model):
     
     @validates('user_id')
     def validate_user_id(self, value):
-        acronym = value.substring(0, 3)
-        numbers = value.substring(3, 8)
+        acronym = value[0:3]
+        numbers = value[3:8]
         if len(value) != 8:
             raise ValidationError('User ID must be 8 characters long')
         if acronym!= 'USR':
@@ -210,8 +218,8 @@ class LocationPoint(db.Model):
 
     @validates('location_point_id')
     def validate_location_point_id(self, value):
-        acronym = value.substring(0, 3)
-        numbers = value.substring(3, 8)
+        acronym = value[0:3]
+        numbers = value[3:8]
         if len(value) != 8:
             raise ValidationError('Location Point ID must be 8 characters long')
         if acronym!= 'LPT':
@@ -252,8 +260,8 @@ class Attraction(db.Model):
 
     @validates('attraction_id')
     def validate_attraction_id(self, value):
-        acronym = value.substring(0, 3)
-        numbers = value.substring(3, 8)
+        acronym = value[0:3]
+        numbers = value[3:8]
         if len(value) != 8:
             raise ValidationError('Attraction ID must be 8 characters long')
         if acronym!= 'ATT':
@@ -276,10 +284,28 @@ class TrailAttraction(db.Model):
     attraction_id = db.Column(db.String, db.ForeignKey('CW2.Attraction.attraction_id'), nullable=False,primary_key=True)
     trail_id = db.Column(db.String, db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
 
-    Attraction = db.relationship('Attraction', backref=db.backref('trail_attractions', lazy=True))
-    trail = db.relationship('Trail', backref=db.backref('trail_attractions', lazy=True))
+    Attraction = db.relationship('Attraction', backref='trail_attractions')
+    trail = db.relationship('Trail', backref= 'trail_attractions')
 
+
+class LocationSchema(ma.SQLAlchemyAutoSchema):
+    location_id = fields.Str()
+    country = fields.Str()
+    county = fields.Str()
+    city = fields.Str()
+    class Meta:
+        model = User
+        load_instance = True
+        sqla_session = db.session
+Location_schema = LocationSchema()
 class TrailSchema(ma.SQLAlchemyAutoSchema):
+
+    trail_id = fields.Str()
+    trail_name = fields.Str()
+    difficulty = fields.Str()
+    length = fields.Float()
+    traffic = fields.Str()
+    location = fields.Nested(LocationSchema)
     class Meta:
         model = Trail
         load_instance = True
@@ -288,10 +314,14 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
 trail_schema = TrailSchema()
 trails_schema = TrailSchema(many=True)
 class UserSchema(ma.SQLAlchemyAutoSchema):
+    user_id = fields.Str()
+    username = fields.Str()
+    email = fields.Str()
+    password = fields.Str()
+    role = fields.Str()
     class Meta:
         model = User
         load_instance = True
         sqla_session = db.session
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
-

@@ -5,7 +5,7 @@ info:
   version: '1.0.0'
 
 servers:
- - url: 'auth/api'
+ - url: '/api' #/auth/api/users
   #- url: 'http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson/'
     #description: 'UoP Web Server'
 
@@ -35,6 +35,25 @@ components:
           type: string
           description: 'Expected traffic on the trail'
           enum: ['light', 'moderate', 'heavy']
+        region:
+          type: object
+          description: 'Region associated with the trail'
+          $ref: '#/components/schemas/Location' 
+    Location:
+      type: object
+      properties:
+        location_id:
+          type: string
+          description: 'Unique identifier for the location'
+        country:
+          type: string
+          description: 'Country of the location'
+        county:
+          type: string
+          description: 'County of the region'
+        city:
+          type: string
+          description: 'City of the trail location'
   parameters:
     trail_id:
       name: 'trail_id'
@@ -42,7 +61,8 @@ components:
       description: 'Name of the trail to search for'
       required: True
       schema:
-        type: string
+        type: string 
+
 
 paths:
   /trails:
@@ -54,6 +74,22 @@ paths:
       responses:
         '200':
           description: Successfully retrieved list of trails
+        '400':
+          description: Request failed, please retry.
+    post:
+      operationId: 'trail.create'
+      tags:
+        - 'trails'
+      summary: Create a new trail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trail'
+      responses:
+        '201':
+          description: Trail created successfully
         '400':
           description: Request failed, please retry.
   /trails/{trail_id}:
