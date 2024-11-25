@@ -57,11 +57,12 @@ class Trail(db.Model):
     elevation_gain = db.Column(db.Integer, nullable=False)
     route_type = db.Column(db.String, nullable=False)
 
-    location_pt_1 = db.Column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
-    location_pt_2 = db.column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
-    location_pt_3 = db.column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
-    location_pt_4 = db.column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
-    location_pt_5 = db.column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
+    LOCATION_POINT = 'CW2.Location_Point.location_point_id'
+    location_pt_1 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_2 = db.column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_3 = db.column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_4 = db.column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_5 = db.column(db.Integer, db.ForeignKey(LOCATION_POINT))
     
     @validates('trail_id') 
     def validate_trail_id(self, value):
@@ -201,7 +202,7 @@ class Locationpoint(db.Model):
     location_point_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False, primary_key=True)
     lagitude = db.Column(db.DECIMAL, nullable=False)
     longitude = db.Column(db.DECIMAL, nullable=False)
-    description = db.Column(db.String, nullable=False)
+    description = db.Column(db.String)
 
     @validates('location_point_id')
     def validate_location_point_id(self, value):
