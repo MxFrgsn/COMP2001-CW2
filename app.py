@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, render_template
+from flask import render_template
 import config
 from models import Trail
 
@@ -10,16 +10,25 @@ app.add_api(config.basedir / 'swagger.yml')
 def home():
     return render_template('home.html', trails = Trail.query.all())
 
-if __name__ == '__main__': # dontneed this apparently? -> need to use uni web sever
+if __name__ == '__main__': # dont need to when using web server 
+    # need to use web server /auth/api/users
     app.run(host='0.0.0.0',port=8000,debug=True)
 
 # need to comment current code
 # need to ensure im using my web.socem.plymouth.ac.uk web server not my local one
+
 # create a database with tables for countries, counties and cities -> or find online database????
 # create sql trigger or python function to ensure IDs for each table are unique automatically!!!
+
 # should i specify the length of every string in models.py?
-# create CRUD for all tables
+# create CRUD for all tables 
+    # dont need to do this for attractions or locations as its linked to trail and predefined in the database, maybe retrieve for the tables but thats it.
+    # i dont think i need to do this for location points either not sure 
+    # do need to do it for trail attraction, trail and user.
+
     # currently doing trails -> need to do swagger, test and other functions
+    # could search or sort by location or attraction or owner id or trail name instead of just trail_id 
+
 
 
 
@@ -28,7 +37,7 @@ if __name__ == '__main__': # dontneed this apparently? -> need to use uni web se
 # http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson
 # https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users
 
-# Web server file share:
+# IIS Web Server File Share:
 # Connect using file explorer.  
 # Login with univeristy email and password.
 # \\CENT-5-534.uopnet.plymouth.ac.uk\COMP2001\MFerguson 
