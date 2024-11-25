@@ -44,4 +44,5 @@ def delete(trail_id):
 
 # should add update for every attribute of trail
 # should add a function to view what locations a trail has
-#
+# should i be able to view functions based on the name or user id of the trail owner?
+# should i be able to view the attractions of a trail? in the read_one/read_all function?

@@ -47,7 +47,7 @@ class Trail(db.Model):
     trail_id = db.Column(db.String, primary_key=True) 
     location_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False)  
     owner_id = db.Column(db.String, db.ForeignKey('CW2.User.user_id'), nullable=False)  
-    trail_name = db.Column(db.String, nullable=False, Unique=True) 
+    trail_name = db.Column(db.String, nullable=False, unique=True) 
     summary = db.Column(db.String)
     description = db.Column(db.String)
     traffic = db.Column(db.String, nullable=False)
