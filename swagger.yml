@@ -5,8 +5,9 @@ info:
   version: '1.0.0'
 
 servers:
-  - url: 'http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson/'
-    description: 'UoP Web Server'
+ - url: '/api'
+  #- url: 'http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson/'
+    #description: 'UoP Web Server'
 
 components:
   schemas:

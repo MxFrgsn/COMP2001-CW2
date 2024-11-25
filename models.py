@@ -59,10 +59,10 @@ class Trail(db.Model):
 
     LOCATION_POINT = 'CW2.Location_Point.location_point_id'
     location_pt_1 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
-    location_pt_2 = db.column(db.Integer, db.ForeignKey(LOCATION_POINT))
-    location_pt_3 = db.column(db.Integer, db.ForeignKey(LOCATION_POINT))
-    location_pt_4 = db.column(db.Integer, db.ForeignKey(LOCATION_POINT))
-    location_pt_5 = db.column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_2 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_3 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_4 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_5 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
     
     @validates('trail_id') 
     def validate_trail_id(self, value):
@@ -196,7 +196,7 @@ class User(db.Model):
             raise ValidationError('Invalid role')
         return value
 
-class Locationpoint(db.Model):
+class LocationPoint(db.Model):
     __tablename__ = 'Location_Point'
     __table_args__ = {'schema': 'CW2'}
     location_point_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False, primary_key=True)
@@ -275,20 +275,19 @@ class TrailAttraction(db.Model):
     Attraction = db.relationship('Attraction', backref=db.backref('trail_attractions', lazy=True))
     trail = db.relationship('Trail', backref=db.backref('trail_attractions', lazy=True))
 
-class UserSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = User
-        load_instance = True
-        sqla_session = db.session
 class TrailSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Trail
         load_instance = True
         sqla_session = db.session
 
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
-
 trail_schema = TrailSchema()
 trails_schema = TrailSchema(many=True)
+class UserSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        load_instance = True
+        sqla_session = db.session
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
 
