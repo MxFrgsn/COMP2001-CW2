@@ -45,10 +45,11 @@ class Trail(db.Model):
     __tablename__ = 'Trail'
     __table_args__ = {'schema': 'CW2'}
     trail_id = db.Column(db.String, primary_key=True) 
-    location_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False)   
+    location_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False)  
+    owner_id = db.Column(db.String, db.ForeignKey('CW2.User.user_id'), nullable=False)  
     trail_name = db.Column(db.String, nullable=False) 
     summary = db.Column(db.String, nullable=False)
-    description = db.Column(db.String, nullable=False)
+    description = db.Column(db.String)
     traffic = db.Column(db.String, nullable=False)
     difficulty = db.Column(db.String, nullable=False)
     length = db.Column(db.Float, nullable=False)
@@ -56,6 +57,12 @@ class Trail(db.Model):
     elevation_gain = db.Column(db.Integer, nullable=False)
     route_type = db.Column(db.String, nullable=False)
 
+    location_pt_1 = db.Column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
+    location_pt_2 = db.column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
+    location_pt_3 = db.column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
+    location_pt_4 = db.column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
+    location_pt_5 = db.column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False)
+    
     @validates('trail_id') 
     def validate_trail_id(self, value):
         acronym = value.substring(0, 3)
@@ -72,7 +79,7 @@ class Trail(db.Model):
     def validate_trail_name(self, value):
         if len(value) < 3:
             raise ValidationError('Trail name must be at least 3 characters')
-        if len(value) > 50:
+        if len(value) > 255:
             raise ValidationError('Trail name must be at less than 50 characters')
         return value
 
@@ -80,7 +87,7 @@ class Trail(db.Model):
     def validate_trail_summary(self, value):
         if len(value) < 50:
             raise ValidationError('Trail summary must be at least 50')
-        if len(value) > 200:
+        if len(value) > 255:
             raise ValidationError('Trail summary must be at less than 200 characters')
         return value
     
@@ -187,16 +194,51 @@ class User(db.Model):
         if value not in ['admin', 'user']:
             raise ValidationError('Invalid role')
         return value
+
+class Locationpoint(db.Model):
+    __tablename__ = 'Location_Point'
+    __table_args__ = {'schema': 'CW2'}
+    location_point_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False, primary_key=True)
+    lagitude = db.Column(db.DECIMAL, nullable=False)
+    longitude = db.Column(db.DECIMAL, nullable=False)
+    description = db.Column(db.String, nullable=False)
+
+    @validates('location_point_id')
+    def validate_location_point_id(self, value):
+        acronym = value.substring(0, 3)
+        numbers = value.substring(3, 8)
+        if len(value) != 8:
+            raise ValidationError('Location Point ID must be 8 characters long')
+        if acronym!= 'LPT':
+            raise ValidationError('Location Point ID must start with LPT')
+        if numbers.isdigit() == False:
+            raise ValidationError('Location Point ID must end with 5 numbers')
+        return value
     
-class TrailOwnership(db.Model):
-    __tablename__ = 'Trail_Ownership'
-    __table_args__ = ({'schema': 'CW2'})
-    user_id = db.Column(db.String, db.ForeignKey('CW2.User.user_id'), nullable=False, primary_key=True)
-    trail_id = db.Column(db.String, db.ForeignKey('CW2.Trail.trail_id'), nullable=False,primary_key=True)
-
-    user = db.relationship('User', backref=db.backref('owned_trails', lazy=True))
-    trail = db.relationship('Trail', backref=db.backref('trail_owners', lazy=True))
-
+    @validates('lagitude')
+    def validate_lagitude(self, value):
+        if value < -90.00:
+            raise ValidationError('Lagitude must be greater than -90.00')
+        if value > 90.00:
+            raise ValidationError('Lagitude must be less than 90.00')
+        return value
+    
+    @validates('longitude')
+    def validate_longitude(self, value):
+        if value < -180.00:
+            raise ValidationError('Longitude must be greater than -180.00')
+        if value > 180.00:
+            raise ValidationError('Longitude must be less than 180.00')
+        return value
+    
+    @validates('description')
+    def validate_description(self, value):
+        if len(value) < 3:
+            raise ValidationError('Description must be at least 3 characters')
+        if len(value) > 255:
+            raise ValidationError('Description must be at less than 255 characters')
+        return value
+    
 class Attraction(db.Model):
     __tablename__ = 'Attraction'
     __table_args__ = {'schema': 'CW2'}
@@ -243,19 +285,9 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
 
-class TrailOwnershipSchema(ma.SQLAlchemyAutoSchema):
-    owner = fields.Nested(UserSchema)  
-    class Meta:
-        model = TrailOwnership
-        load_instance = True
-        sqla_session = db.session
-
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 trail_schema = TrailSchema()
 trails_schema = TrailSchema(many=True)
-
-trail_ownership_schema = TrailOwnershipSchema()
-trail_ownerships_schema = TrailOwnershipSchema(many=True)
 
