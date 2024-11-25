@@ -10,12 +10,13 @@ app.add_api(config.basedir / 'swagger.yml')
 def home():
     return render_template('home.html', trails = Trail.query.all())
 
-if __name__ == '__main__': # dontneed this apparently?
+if __name__ == '__main__': # dontneed this apparently? -> need to use uni web sever
     app.run(host='0.0.0.0',port=8000,debug=True)
 
 # need to comment current code
-# need to ensure im using my web.socem.plymouth.ac.uk web server
-# neeed to make theses files are in file share web server -> not sure what log in details are
+# need to ensure im using my web.socem.plymouth.ac.uk web server not my local one
+
+
 # create a database with tables for countries, counties and cities -> or find online database
 # create sql trigger or python function to ensure IDs for each table are unique automatically
 

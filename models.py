@@ -53,7 +53,7 @@ class Trail(db.Model):
     traffic = db.Column(db.String, nullable=False)
     difficulty = db.Column(db.String, nullable=False)
     length = db.Column(db.Float, nullable=False)
-    duration = db.Column(db.Float, nullable=False)
+    duration = db.Column(db.String, nullable=False)
     elevation_gain = db.Column(db.Integer, nullable=False)
     route_type = db.Column(db.String, nullable=False)
 
@@ -86,7 +86,7 @@ class Trail(db.Model):
 
     @validates('summary')
     def validate_trail_summary(self, value):
-        if len(value) < 50:
+        if len(value) < 10:
             raise ValidationError('Trail summary must be at least 50')
         if len(value) > 255:
             raise ValidationError('Trail summary must be at less than 200 characters')
@@ -122,12 +122,16 @@ class Trail(db.Model):
 
     @validates('duration')
     def validate_duration(self, value):
-        hours, minutes = map(int, value.split(':'))
-        if hours < 0 or hours > 23:
-            raise ValidationError('Hours must be between 00 and 23')
+        try:
+            hours, minutes = map(int, value.split(':'))
+        except ValueError:
+            raise ValidationError("Duration must be in the format 'hh:mm'.")
+        if hours < 0 or hours > 99:
+            raise ValidationError('Hours must be between 00 and 99.')
         if minutes < 0 or minutes > 59:
-            raise ValidationError('Minutes must be between 00 and 59')
-        return value 
+            raise ValidationError('Minutes must be between 00 and 59.')
+        return value
+
 
     @validates('elevation_gain') # Must ensure its in meters
     def validate_elevation_gain(self, value): 
