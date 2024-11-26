@@ -17,53 +17,112 @@ components:
       required:
         - trail_id
         - trail_name
+        - difficulty
+        - length
+        - traffic
+        - owner_id
+        - location
       properties:
         trail_id:
           type: string
-          description: 'Unique identifier for the trail'
+          description: "Unique identifier for the trail"
         trail_name:
           type: string
-          description: 'Name of the trail'
+          description: "Name of the trail"
         difficulty:
           type: string
-          description: 'Difficulty level of the trail'
-          enum: ['easy', 'moderate', 'hard']
+          description: "Difficulty level of the trail"
+          enum:
+            - easy
+            - moderate
+            - hard
         length:
           type: number
           format: float
-          description: 'Length of the trail in kilometers'
+          description: "Length of the trail in kilometers"
         traffic:
           type: string
-          description: 'Expected traffic on the trail'
-          enum: ['light', 'moderate', 'heavy']
-        region:
-          type: object
-          description: 'Region associated with the trail'
-          $ref: '#/components/schemas/Location' 
+          description: "Expected traffic on the trail"
+          enum:
+            - light
+            - moderate
+            - heavy
+        duration:
+          type: string
+          description: "Approximate duration to complete the trail (optional)"
+        elevation_gain:
+          type: integer
+          description: "Elevation gain in meters (optional)"
+        route_type:
+          type: string
+          description: "Type of route, e.g., loop, out-and-back, etc. (optional)"
+        summary:
+          type: string
+          description: "Short summary of the trail (optional)"
+        description:
+          type: string
+          description: "Detailed description of the trail (optional)"
+        owner_id:
+          type: string
+          description: "Unique identifier of the trail owner"
+        location:
+          $ref: "#/components/schemas/Location"
     Location:
       type: object
+      required:
+        - location_id
+        - country
+        - county
+        - city
       properties:
         location_id:
           type: string
-          description: 'Unique identifier for the location'
+          description: "Unique identifier for the location"
         country:
           type: string
-          description: 'Country of the location'
+          description: "Country of the location"
         county:
           type: string
-          description: 'County of the region'
+          description: "County of the region"
         city:
           type: string
-          description: 'City of the trail location'
+          description: "City of the trail location"
+    User:
+      type: object
+      required:
+        - user_id
+        - username
+        - email
+        - password
+      properties:
+        user_id:
+          type: string
+          description: "Unique identifier for the user"
+        username:
+          type: string
+          description: "Username of the user"
+        email:
+          type: string
+          format: email
+          description: "Email address of the user"
+        password:
+          type: string
+          description: "Password of the user"
   parameters:
     trail_id:
-      name: 'trail_id'
-      in: 'query'
-      description: 'Name of the trail to search for'
-      required: True
+      name: "trail_id"
+      in: "query"
+      description: "Unique identifier of the trail to search for"
+      required: true
       schema:
-        type: string 
-
+        type: string
+    user_id:
+      name: "user_id"
+      in: "query"
+      description: "Unique identifier of the user to search for"
+      required: true
+      schema:
+        type: string
 
 paths:
   /trails:
@@ -78,7 +137,7 @@ paths:
         '400':
           description: Request failed, please retry.
     post:
-      operationId: 'trail.create'
+      operationId: 'trail.create' # havent tested this swagger -> should i use postman to help this or continue api/ui with swagger? 
       tags:
         - 'trails'
       summary: Create a new trail
@@ -87,6 +146,7 @@ paths:
         content:
           application/json:
             schema:
+              x-body-name: 'trail'
               $ref: '#/components/schemas/Trail'
       responses:
         '201':
@@ -106,3 +166,68 @@ paths:
           description: Successful response, Trail exists
         '404':
           description: Trail not found
+    delete:
+      operationId: 'trail.delete'
+      tags:
+        - 'trails'
+      summary: Delete a trail by ID
+      parameters:
+        - $ref: '#/components/parameters/trail_id'
+      responses:
+        '204':
+          description: Trail deleted successfully
+        '404':
+  
+          description: Trail not found
+  /users:
+    get:
+      operationId: 'user.read_all'
+      tags:
+        - 'users'
+      summary: Get a list of users
+      responses:
+        '200':
+          description: Successfully retrieved list of users
+        '400':
+          description: Request failed, please retry.
+    post:
+      operationId: 'user.create'
+      tags:
+        - 'users'
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Request failed, please retry.
+  /users/{user_id}:
+    get:
+      operationId: 'user.read_one'
+      tags:
+        - 'users'
+      summary: Get one user by ID
+      parameters:
+        - $ref: '#/components/parameters/user_id'
+      responses:
+        '200':
+          description: Successful response, User exists
+        '404':
+          description: User not found
+    delete:
+      operationId: 'user.delete'
+      tags:
+        - 'users'
+      summary: Delete a user by ID
+      parameters:
+        - $ref: '#/components/parameters/user_id'
+      responses:
+        '204':
+          description: User deleted successfully
+        '404':
+          description: User not found

@@ -299,13 +299,18 @@ class LocationSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
 Location_schema = LocationSchema()
 class TrailSchema(ma.SQLAlchemyAutoSchema):
-
-    trail_id = fields.Str()
-    trail_name = fields.Str()
-    difficulty = fields.Str()
-    length = fields.Float()
-    traffic = fields.Str()
-    location = fields.Nested(LocationSchema)
+    trail_id = fields.Str(required=True)
+    trail_name = fields.Str(required=True)
+    difficulty = fields.Str(required=True)
+    length = fields.Float(required=True)
+    traffic = fields.Str(required=True)
+    duration = fields.Str(missing=None)
+    elevation_gain = fields.Integer(missing=None)  
+    route_type = fields.Str(missing=None)  
+    summary = fields.Str(missing=None)
+    description = fields.Str(missing=None)
+    owner_id = fields.Str(required=True)
+    location = fields.Nested(LocationSchema, required=True)
     class Meta:
         model = Trail
         load_instance = True

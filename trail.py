@@ -1,9 +1,9 @@
 # trail.py
 from flask import abort, make_response
 from config import db
-from models import trail_schema, trails_schema, Trail, Location
+from models import trail_schema, trails_schema, Trail, Location,TrailAttraction 
 
-def create(trail):
+def create(trail): # done swagger, need test
     trail_id = trail.get('trail_id')
     existing_trail = trail.query.filter(trail.trail_id == trail_id).one_or_none()
     if existing_trail is None:
@@ -14,15 +14,15 @@ def create(trail):
     else:
         abort(406, f"trail with trail_id {trail_id} already exists")
 
-def read_one(trail_id): 
+def read_one(trail_id): #done swagger, done test
     trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
     if trail is not None:
         return trail_schema.dump(trail)
     else:
         abort(404, f"Trail with trail_id {trail_id} not found")
 
-def read_all():
-    trails = db.session.query(Trail).join(Location).all() # can i include attractions too?
+def read_all(): # done swagger, done test
+    trails = db.session.query(Trail).join(Location).outerjoin(TrailAttraction).all()
     return trails_schema.dump(trails)
 
 def updateTrailName(trail_name,trail_id):
@@ -34,7 +34,7 @@ def updateTrailName(trail_name,trail_id):
     else:
         abort(404, f"Trail with trail_id {trail_id} not found")
     
-def delete(trail_id):
+def delete(trail_id): # done swagger, need test
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
     if existing_trail:
         db.session.delete(existing_trail)

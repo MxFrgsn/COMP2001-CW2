@@ -30,8 +30,6 @@ if __name__ == '__main__': # dont need to when using web server
     # could search or sort by location or attraction or owner id or trail name instead of just trail_id 
 
 
-
-
 # IIS Web Server
 # Your web page is available at:
 # http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson

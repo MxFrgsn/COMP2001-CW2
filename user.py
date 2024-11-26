@@ -3,7 +3,7 @@ from flask import abort, make_response
 from config import db
 from models import users_schema, user_schema, User
 
-def create(user):
+def create(user): # done swagger, need test
     user_id = user.get('user_id')
     existing_user = user.query.filter(user.user_id == user_id).one_or_none()
     if existing_user is None:
@@ -14,7 +14,7 @@ def create(user):
     else:
         abort(406, f"user with user_id {user_id} already exists")
 
-def read_one(user_id): 
+def read_one(user_id): #done swagger, need test
     user = User.query.filter(User.user_id == user_id).one_or_none()
     if user is not None:
         return user_schema.dump(user)
@@ -22,10 +22,10 @@ def read_one(user_id):
         abort(404, f"User with user_id {user_id} not found")
 
 def read_all():
-    users = db.session.query(User).all() # can i include attractions too?
+    users = db.session.query(User).all() 
     return users.schema.dump(users)
 
-def updateUserName(username,user_id):
+def updateUserName(username,user_id): #done swagger, need test, need to do for all attributes
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
     if existing_user:
         existing_user.username = username 
@@ -34,7 +34,7 @@ def updateUserName(username,user_id):
     else:
         abort(404, f"User with user_id {user_id} not found")
     
-def delete(user_id):
+def delete(user_id): #done swagger, need test
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
     if existing_user:
         db.session.delete(existing_user)
