@@ -3,7 +3,7 @@ from flask import abort, make_response, request
 from config import db
 from models import users_schema, user_schema, User
 
-def create(): # done swagger, need test
+def create():
     user_data = request.get_json()  
     if not user_data:  
         abort(400, "No input data provided")
@@ -48,7 +48,7 @@ def update(user_id):
     else:
         abort(404, f"User with ID {user_id} not found")
     
-def delete(user_id): #done swagger, need test
+def delete(user_id): 
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
     if existing_user:
         db.session.delete(existing_user)
