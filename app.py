@@ -31,12 +31,9 @@ if __name__ == '__main__':
     # but need to link tables in swagger and when dumping the data from the schema.
 
     # should i be able to view the attractions of a trail? in the read_one/read_all function? 
-
     # should add a function to view what users a user owns in user.py? 
     # should i add a update to trail_attraction.py and attractions.py?
 
-    # need to do location points.py
-    # need to do attractions.py
 
     # do query to search trails by name, location, dfifficulty, traffic, -> maybe a range if included? length duration, elevation gain, route type, 
     # could also do attraction id, owner id 

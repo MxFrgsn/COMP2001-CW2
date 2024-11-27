@@ -82,7 +82,7 @@ components:
         location_pt_5:
           type: string
           description: 'Fifth point of the trail location'
-    TrailUpdate:
+    Trail_Update:
       type: object
       properties:
         trail_name:
@@ -139,7 +139,7 @@ components:
         location_pt_5:
           type: string
           description: 'New fifth point of the trail location'
-    UserUpdate:
+    User_Update:
       type: object
       properties:
         username:
@@ -210,13 +210,12 @@ components:
         attraction_name:
           type: string
           description: 'Name of the attraction'
-    Location_Point:
+    LocationPoint:
       type: object
       required:
         - location_point_id
         - latitude
         - longitude
-        - description
       properties:
         location_point_id:
           type: string
@@ -232,6 +231,20 @@ components:
         description:
           type: string
           description: 'Description of the location point'
+    LocationPoint_Update:
+      type: object
+      properties:
+        description:
+            type: string
+            description: 'New description of the location point'
+        latitude:
+          type: number
+          format: float
+          description: 'New latitude of the location point'
+        longitude:
+          type: number
+          format: float
+          description: 'New longitude of the location point'
   parameters:
     trail_id:
       name: 'trail_id'
@@ -340,7 +353,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TrailUpdate'
+              $ref: '#/components/schemas/Trail_Update'
       responses:
         '200':
           description: Trail updated successfully
@@ -412,7 +425,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserUpdate'
+              $ref: '#/components/schemas/User_Update'
       responses:
         '200':
           description: User updated successfully
@@ -559,5 +572,77 @@ paths:
           description: Attraction deleted successfully
         '404':
           description: Attraction not found
+  /location_point:
+    get:
+      operationId: 'location_point.read_all'
+      tags:
+        - 'location_points'
+      summary: Get a list of location points
+      parameters:
+       - $ref: '#/components/parameters/name'
+      responses:
+        '200':
+          description: Successfully retrieved list of location points
+        '400':
+          description: Request failed, please retry.
+    post:
+      operationId: 'location_point.create'
+      tags:
+        - 'location_points'
+      summary: Create a new location point
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationPoint'
+      responses:
+        '201':
+          description: Location point created successfully
+        '400':
+          description: Request failed, please retry.
+  /location_point/{location_point_id}:
+    get:
+      operationId: 'location_point.read_one'
+      tags:
+        - 'location_points'
+      summary: Get one location point by ID
+      parameters:
+        - $ref: '#/components/parameters/location_point_id'
+      responses:
+        '200':
+          description: Successful response, Location point exists
+        '404':
+          description: Location point not found
+    delete:
+      operationId: 'location_point.delete'
+      tags:
+        - 'location_points'
+      summary: Delete a location point by ID
+      parameters:
+        - $ref: '#/components/parameters/location_point_id'
+      responses:
+        '204':
+          description: Location point deleted successfully
+        '404':
+          description: Location point not found
+    patch:
+      operationId: 'location_point.update'
+      tags:
+        - 'location_points'
+      summary: Update a location point by IEQ
+      parameters:
+        - $ref: '#/components/parameters/location_point_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationPoint_Update'
+      responses:
+        '200':
+          description: Location point updated successfully
+        '404':
+          description: Location point not found
 
   
