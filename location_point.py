@@ -26,7 +26,7 @@ def read_one(location_point_id):
 def read_all(name=None): 
     query = LocationPoint.query
     if name:
-        query = query.filter(LocationPoint.location_point_name.ilike(f"%{name}%"))
+        query = query.filter(LocationPoint.description.ilike(f"%{name}%"))
     location_points = query.all()
     return location_points_schema.dump(location_points)
 
