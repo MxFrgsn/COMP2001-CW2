@@ -186,6 +186,52 @@ components:
           enum:
             - admin
             - user
+    TrailAttraction:
+      type: object
+      required:
+        - trail_id
+        - attraction_id
+      properties:
+        trail_id:
+          type: string
+          description: 'Unique identifier of the trail'
+        attraction_id:
+          type: string
+          description: 'Unique identifier of the attraction'
+    Attraction:
+      type: object
+      required:
+        - attraction_id
+        - attraction_name
+      properties:
+        attraction_id:
+          type: string
+          description: 'Unique identifier for the attraction'
+        attraction_name:
+          type: string
+          description: 'Name of the attraction'
+    Location_Point:
+      type: object
+      required:
+        - location_point_id
+        - latitude
+        - longitude
+        - description
+      properties:
+        location_point_id:
+          type: string
+          description: 'Unique identifier for the location point'
+        latitude:
+          type: number
+          format: float
+          description: 'Latitude of the location point'
+        longitude:
+          type: number
+          format: float
+          description: 'Longitude of the location point'
+        description:
+          type: string
+          description: 'Description of the location point'
   parameters:
     trail_id:
       name: 'trail_id'
@@ -263,7 +309,7 @@ paths:
       operationId: 'trail.update'
       tags:
         - 'trails'
-      summary: Update a trail by ID # currently doing this work
+      summary: Update a trail by ID 
       parameters:
         - $ref: '#/components/parameters/trail_id'
       requestBody:
@@ -347,3 +393,55 @@ paths:
           description: User updated successfully
         '404':
           description: User not found
+  /trail_attraction: # working on this
+    get:
+      operationId: 'trail_attraction.read_all'
+      tags:
+        - 'trail_attraction'
+      summary: Get a list of trail attractions
+      responses:
+        '200':
+          description: Successfully retrieved list of trail attractions
+        '400':
+          description: Request failed, please retry.
+    post:
+      operationId: 'trail_attraction.create'
+      tags:
+        - 'trail_attraction'
+      summary: Create a new trail attraction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrailAttraction'
+      responses:
+        '201':
+          description: Trail attraction created successfully
+        '400':
+          description: Request failed, please retry.
+  /trail_attraction/{trail_attraction_id}:
+    get:
+      operationId: 'trail_attraction.read_one'
+      tags:
+        - 'trail_attraction'
+      summary: Get one trail attraction by ID
+      parameters:
+        - $ref: '#/components/parameters/trail_attraction_id'
+      responses:
+        '200':
+          description: Successful response, Trail attraction exists
+        '404':
+          description: Trail attraction not found
+    delete:
+      operationId: 'trail_attraction.delete'
+      tags:
+        - 'trail_attraction'
+      summary: Delete a trail attraction by ID
+      parameters:
+        - $ref: '#/components/parameters/trail_attraction_id'
+      responses:
+        '204':
+          description: Trail attraction deleted successfully
+        '404':
+          description: Trail attraction not found

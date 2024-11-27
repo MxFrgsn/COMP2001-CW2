@@ -300,6 +300,7 @@ attractions_schema = AttractionSchema(many=True)
 class TrailAttractionSchema(ma.SQLAlchemyAutoSchema):
     attraction_id = fields.Str()
     trail_id = fields.Str()
+    attraction_name = ma.Str(attribute='attraction.attraction_name')
     class Meta:
         model = TrailAttraction
         load_instance = True
