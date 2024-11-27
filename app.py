@@ -19,14 +19,14 @@ if __name__ == '__main__': # dont need to when using web server
 
 # create sql trigger or python function to ensure IDs for each table are unique automatically!!!
 
-# should i specify the length of every string in models.py?
+
+# should i also specify the type of each column in 
 # create CRUD for all tables 
     # dont need to do this for attractions as its linked to trail and predefined in the database, maybe retrieve for the tables but thats it.
     # i dont think i need to do this for location points either not sure 
     # do need to do it for trail attraction, trail and user and location point.
 
-    # currently doing trails -> need to do swagger, test and other functions
-    # could search or sort by location or attraction or owner id or trail name instead of just trail_id 
+    # could search attractions or owner id or trail name instead of just trail_id 
 
 
 # IIS Web Server
