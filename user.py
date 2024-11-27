@@ -7,7 +7,7 @@ def create():
     user_data = request.get_json()  
     user_id = user_data.get('user_id')
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
-    
+
     if existing_user is None:
         new_user = user_schema.load(user_data, session=db.session)
         db.session.add(new_user)
@@ -23,9 +23,13 @@ def read_one(user_id):
     else:
         abort(404, f"User with user ID {user_id} not found")
 
-def read_all():
-    users = db.session.query(User).all() 
+def read_all(name=None):
+    query = User.query
+    if name:
+        query = query.filter(User.trail_name.ilike(f"%{name}%"))
+    users = query.all()
     return users_schema.dump(users)
+
 
 def update(user_id):
     # Patch is used instead of put, as put updates all fields, patch only updates the fields that are included in the request body

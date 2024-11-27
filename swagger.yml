@@ -262,6 +262,13 @@ paths:
       tags:
         - 'trails'
       summary: Get a list of trails
+      parameters:
+      - name: 'name'
+        in: 'query'
+        description: 'Filter trails by name'
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           description: Successfully retrieved list of trails
@@ -336,6 +343,13 @@ paths:
       tags:
         - 'users'
       summary: Get a list of users
+      parameters:
+      - name: 'name'
+        in: 'query'
+        description: 'Filter users by name'
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           description: Successfully retrieved list of users

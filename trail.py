@@ -23,8 +23,11 @@ def read_one(trail_id):
     else:
         abort(404, f"Trail with trail_id {trail_id} not found")
 
-def read_all(): 
-    trails = db.session.query(Trail).all()
+def read_all(name=None): 
+    query = Trail.query
+    if name:
+        query = query.filter(Trail.trail_name.ilike(f"%{name}%"))
+    trails = query.all()
     return trails_schema.dump(trails)
 
 def update(trail_id):
