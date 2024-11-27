@@ -329,3 +329,21 @@ paths:
           description: User deleted successfully
         '404':
           description: User not found
+    patch:
+      operationId: 'user.update'
+      tags:
+        - 'users'
+      summary: Update a user by ID
+      parameters:
+        - $ref: '#/components/parameters/user_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated successfully
+        '404':
+          description: User not found

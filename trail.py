@@ -63,7 +63,9 @@ def update(trail_id):
 
 def delete(trail_id): 
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
-    existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all()
+    # Deleting all attractions associated with the trail, as trail id is a foreign key in the trail attraction table
+    existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all() 
+
 
     if existing_trail:
         for attraction in existing_trail_attractions:
