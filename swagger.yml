@@ -254,6 +254,20 @@ components:
       required: true
       schema:
         type: string
+    location_point_id:
+      name: 'location_point_id'
+      in: 'path'
+      description: 'Unique identifier of the location point to search for'
+      required: true
+      schema:
+        type: string
+    name:
+      name: 'name'
+      in: 'query'
+      description: 'Filter by name'
+      required: false
+      schema:
+        type: string
 
 paths:
   /trails:
@@ -263,12 +277,7 @@ paths:
         - 'trails'
       summary: Get a list of trails
       parameters:
-      - name: 'name'
-        in: 'query'
-        description: 'Filter trails by name'
-        required: false
-        schema:
-          type: string
+       - $ref: '#/components/parameters/name'
       responses:
         '200':
           description: Successfully retrieved list of trails
@@ -344,12 +353,7 @@ paths:
         - 'users'
       summary: Get a list of users
       parameters:
-      - name: 'name'
-        in: 'query'
-        description: 'Filter users by name'
-        required: false
-        schema:
-          type: string
+        - $ref: '#/components/parameters/name'
       responses:
         '200':
           description: Successfully retrieved list of users
@@ -501,5 +505,59 @@ paths:
                   $ref: '#/components/schemas/TrailAttraction'
         '400':
           description: Request failed, please retry.
-  
+  /attractions:
+    get:
+      operationId: 'attraction.read_all'
+      tags:
+        - 'attractions'
+      summary: Get a list of attractions
+      parameters:
+       - $ref: '#/components/parameters/name'
+      responses:
+        '200':
+          description: Successfully retrieved list of attractions
+        '400':
+          description: Request failed, please retry.
+    post:
+      operationId: 'attraction.create'
+      tags:
+        - 'attractions'
+      summary: Create a new attraction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attraction'
+      responses:
+        '201':
+          description: Attraction created successfully
+        '400':
+          description: Request failed, please retry.
+  /attractions/{attraction_id}:
+    get:
+      operationId: 'attraction.read_one'
+      tags:
+        - 'attractions'
+      summary: Get one attraction by ID
+      parameters:
+        - $ref: '#/components/parameters/attraction_id'
+      responses:
+        '200':
+          description: Successful response, Attraction exists
+        '404':
+          description: Attraction not found
+    delete:
+      operationId: 'attraction.delete'
+      tags:
+        - 'attractions'
+      summary: Delete an attraction by ID
+      parameters:
+        - $ref: '#/components/parameters/attraction_id'
+      responses:
+        '204':
+          description: Attraction deleted successfully
+        '404':
+          description: Attraction not found
+
   

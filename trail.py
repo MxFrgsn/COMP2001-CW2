@@ -75,7 +75,3 @@ def delete(trail_id):
         return make_response(f"trail with ID {trail_id} has been deleted", 200)
     else:
         abort(404, f"trail with ID {trail_id} not found")
-
-# should add update for every attribute of trail
-# should i be able to view functions based on the name or user id of the trail owner?
-# should i be able to view the attractions of a trail? in the read_one/read_all function?
