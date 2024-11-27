@@ -24,13 +24,13 @@ components:
       properties:
         trail_id:
           type: string
-          description: "Unique identifier for the trail"
+          description: 'Unique identifier for the trail'
         trail_name:
           type: string
-          description: "Name of the trail"
+          description: 'Name of the trail'
         difficulty:
           type: string
-          description: "Difficulty level of the trail"
+          description: 'Difficulty level of the trail'
           enum:
             - easy
             - moderate
@@ -38,50 +38,126 @@ components:
         length:
           type: number
           format: float
-          description: "Length of the trail in kilometers"
+          description: 'Length of the trail in kilometers'
         traffic:
           type: string
-          description: "Expected traffic on the trail"
+          description: 'Expected traffic on the trail'
           enum:
             - light
             - moderate
             - heavy
         duration:
           type: string
-          description: "Approximate duration to complete the trail (optional)"
+          description: 'Approximate duration to complete the trail '
         elevation_gain:
           type: integer
-          description: "Elevation gain in meters (optional)"
+          description: 'Elevation gain in meters '
         route_type:
           type: string
-          description: "Type of route, e.g., loop, out-and-back, etc. (optional)"
+          description: 'Type of route, e.g., loop, out-and-back, etc. '
         summary:
           type: string
-          description: "Short summary of the trail (optional)"
+          description: 'Short summary of the trail '
         description:
           type: string
-          description: "Detailed description of the trail (optional)"
+          description: 'Detailed description of the trail '
         owner_id:
           type: string
-          description: "Unique identifier of the trail owner"
+          description: 'Unique identifier of the trail owner'
         location:
           type: string
-          description: "Location of the trail"
+          description: 'Location of the trail'
         location_pt_1:
           type: string
-          description: "First point of the trail location"
+          description: 'First point of the trail location'
         location_pt_2:
           type: string
-          description: "Second point of the trail location"
+          description: 'Second point of the trail location'
         location_pt_3:
           type: string
-          description: "Third point of the trail location"
+          description: 'Third point of the trail location'
         location_pt_4:
           type: string
-          description: "Fourth point of the trail location"
+          description: 'Fourth point of the trail location'
         location_pt_5:
           type: string
-          description: "Fifth point of the trail location"
+          description: 'Fifth point of the trail location'
+    TrailUpdate:
+      type: object
+      properties:
+        trail_name:
+          type: string
+          description: 'New name of the trail'
+        difficulty:
+          type: string
+          description: 'New difficulty level of the trail'
+          enum:
+            - easy
+            - moderate
+            - hard
+        length:
+          type: number
+          format: float
+          description: 'New length of the trail in kilometers'
+        traffic:
+          type: string
+          description: 'New expected traffic on the trail'
+          enum:
+            - light
+            - moderate
+            - heavy
+        duration:
+          type: string
+          description: 'Approximate duration to complete the trail'
+        elevation_gain:
+          type: integer
+          description: 'New elevation gain in meters'
+        route_type:
+          type: string
+          description: 'New type of route, e.g., loop, out-and-back, etc.'
+        summary:
+          type: string
+          description: 'New short summary of the trail'
+        description:
+          type: string
+          description: 'New detailed description of the trail'
+        location:
+          type: string
+          description: 'New location of the trail'
+        location_pt_1:
+          type: string
+          description: 'New first point of the trail location'
+        location_pt_2:
+          type: string
+          description: 'New second point of the trail location'
+        location_pt_3:
+          type: string
+          description: 'New third point of the trail location'
+        location_pt_4:
+          type: string
+          description: 'Newvfourth point of the trail location'
+        location_pt_5:
+          type: string
+          description: 'New fifth point of the trail location'
+    UserUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+          description: 'New username of the user'
+        email:
+          type: string
+          format: email
+          description: ' New email address of the user'
+        password:
+          type: string
+          description: 'new Password of the user'
+        role:
+          type: string
+          description: 'new Role of the user'
+          enum:
+            - admin
+            - user
     User:
       type: object
       required:
@@ -93,35 +169,35 @@ components:
       properties:
         user_id:
           type: string
-          description: "Unique identifier for the user"
+          description: 'Unique identifier for the user'
         username:
           type: string
-          description: "Username of the user"
+          description: 'Username of the user'
         email:
           type: string
           format: email
-          description: "Email address of the user"
+          description: 'Email address of the user'
         password:
           type: string
-          description: "Password of the user"
+          description: 'Password of the user'
         role:
           type: string
-          description: "Role of the user"
+          description: 'Role of the user'
           enum:
             - admin
             - user
   parameters:
     trail_id:
-      name: "trail_id"
-      in: "query"
-      description: "Unique identifier of the trail to search for"
+      name: 'trail_id'
+      in: 'path'
+      description: 'Unique identifier of the trail to search for'
       required: true
       schema:
         type: string
     user_id:
-      name: "user_id"
-      in: "query"
-      description: "Unique identifier of the user to search for"
+      name: 'user_id'
+      in: 'path'
+      description: 'Unique identifier of the user to search for'
       required: true
       schema:
         type: string
@@ -143,7 +219,7 @@ paths:
         '400':
           description: Request failed, please retry.
     post:
-      operationId: 'trail.create' # havent tested this swagger -> should i use postman to help this or continue api/ui with swagger? 
+      operationId: 'trail.create' 
       tags:
         - 'trails'
       summary: Create a new trail
@@ -181,6 +257,24 @@ paths:
       responses:
         '204':
           description: Trail deleted successfully
+        '404':
+          description: Trail not found
+    patch:
+      operationId: 'trail.update'
+      tags:
+        - 'trails'
+      summary: Update a trail by ID # currently doing this work
+      parameters:
+        - $ref: '#/components/parameters/trail_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrailUpdate'
+      responses:
+        '200':
+          description: Trail updated successfully
         '404':
           description: Trail not found
   /users:

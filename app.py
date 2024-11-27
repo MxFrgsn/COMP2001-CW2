@@ -5,8 +5,8 @@ from models import Trail
 
 app = config.connex_app
 app.add_api(config.basedir / 'swagger.yml') 
-@app.route('/')
 
+@app.route('/')
 def home():
     return render_template('home.html', trails = Trail.query.all())
 
@@ -21,9 +21,9 @@ if __name__ == '__main__': # dont need to when using web server
 
 # should i specify the length of every string in models.py?
 # create CRUD for all tables 
-    # dont need to do this for attractions or locations as its linked to trail and predefined in the database, maybe retrieve for the tables but thats it.
+    # dont need to do this for attractions as its linked to trail and predefined in the database, maybe retrieve for the tables but thats it.
     # i dont think i need to do this for location points either not sure 
-    # do need to do it for trail attraction, trail and user.
+    # do need to do it for trail attraction, trail and user and location point.
 
     # currently doing trails -> need to do swagger, test and other functions
     # could search or sort by location or attraction or owner id or trail name instead of just trail_id 

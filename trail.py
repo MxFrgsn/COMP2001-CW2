@@ -3,7 +3,7 @@ from flask import abort, make_response, request
 from config import db
 from models import trail_schema, trails_schema, Trail, TrailAttraction 
 
-def create(): # done swagger, done test
+def create(): 
     trail_data = request.get_json()  
     if not trail_data:  
         abort(400, "No input data provided")
@@ -18,27 +18,50 @@ def create(): # done swagger, done test
     else:
         abort(406, f"trail with trail_id {trail_id} already exists")
 
-def read_one(trail_id): #done swagger, done test
+def read_one(trail_id):
     trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
     if trail is not None:
         return trail_schema.dump(trail)
     else:
         abort(404, f"Trail with trail_id {trail_id} not found")
 
-def read_all(): # done swagger, done test
+def read_all(): 
     trails = db.session.query(Trail).all()
     return trails_schema.dump(trails)
 
-def updateTrailName(trail_name,trail_id):
+def update(trail_id):
+    trail_data = request.get_json()  
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
-    if existing_trail:
-        existing_trail.trail_name = trail_name 
-        db.session.commit()
-        return {"message": f"Trail with ID {trail_id} updated successfully."}, 200
-    else:
-        abort(404, f"Trail with ID {trail_id} not found")
     
-def delete(trail_id): # done swagger, done test
+    if existing_trail:
+        # Update only the fields that were included in the request body
+        if 'trail_name' in trail_data:
+            existing_trail.trail_name = trail_data['trail_name']
+        if 'difficulty' in trail_data:
+            existing_trail.difficulty = trail_data['difficulty']
+        if 'length' in trail_data:
+            existing_trail.length = trail_data['length']
+        if 'traffic' in trail_data:
+            existing_trail.traffic = trail_data['traffic']
+        if 'duration' in trail_data:
+            existing_trail.duration = trail_data['duration']
+        if 'elevation_gain' in trail_data:
+            existing_trail.elevation_gain = trail_data['elevation_gain']
+        if 'route_type' in trail_data:
+            existing_trail.route_type = trail_data['route_type']
+        if 'summary' in trail_data:
+            existing_trail.summary = trail_data['summary']
+        if 'description' in trail_data:
+            existing_trail.description = trail_data['description']
+        if 'location' in trail_data:
+            existing_trail.location = trail_data['location']
+        
+        db.session.commit()
+        return make_response(f"trail with ID {trail_id} has been updated successfully.", 200)
+    else:
+        abort(404, f"trail with ID {trail_id} not found")
+
+def delete(trail_id): 
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
     existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all()
 
@@ -52,6 +75,5 @@ def delete(trail_id): # done swagger, done test
         abort(404, f"trail with ID {trail_id} not found")
 
 # should add update for every attribute of trail
-# should add a function to view what locations a trail has
 # should i be able to view functions based on the name or user id of the trail owner?
 # should i be able to view the attractions of a trail? in the read_one/read_all function?
