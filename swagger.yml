@@ -12,7 +12,7 @@ servers:
 
 components:
   schemas:
-    Trail:
+    TrailView:
       type: object
       required:
         - trail_id
@@ -87,6 +87,73 @@ components:
         city:
           type: string
           description: "City of the trail location"
+    Trail:
+      type: object
+      required:
+        - trail_name
+        - difficulty
+        - length
+        - traffic
+        - owner_id
+        - location_id
+      properties:
+        trail_name:
+          type: string
+          description: "Name of the trail"
+        difficulty:
+          type: string
+          description: "Difficulty level of the trail"
+          enum:
+            - easy
+            - moderate
+            - hard
+        length:
+          type: number
+          format: float
+          description: "Length of the trail in kilometers"
+        traffic:
+          type: string
+          description: "Expected traffic on the trail"
+          enum:
+            - light
+            - moderate
+            - heavy
+        duration:
+          type: string
+          description: "Approximate duration to complete the trail (optional)"
+        elevation_gain:
+          type: integer
+          description: "Elevation gain in meters (optional)"
+        route_type:
+          type: string
+          description: "Type of route, e.g., loop, out-and-back, etc. (optional)"
+        summary:
+          type: string
+          description: "Short summary of the trail (optional)"
+        description:
+          type: string
+          description: "Detailed description of the trail (optional)"
+        owner_id:
+          type: string
+          description: "Unique identifier of the trail owner"
+        location_id:
+          type: string
+          description: "Unique identifier of the trail location"
+        location_point_1:
+          type: string
+          description: "First point of the trail location"
+        location_point_2:
+          type: string
+          description: "Second point of the trail location"
+        location_point_3:
+          type: string
+          description: "Third point of the trail location"
+        location_point_4:
+          type: string
+          description: "Fourth point of the trail location"
+        location_point_5:
+          type: string
+          description: "Fifth point of the trail location"
     User:
       type: object
       required:
@@ -134,6 +201,10 @@ paths:
       responses:
         '200':
           description: Successfully retrieved list of trails
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrailView'
         '400':
           description: Request failed, please retry.
     post:
@@ -177,7 +248,6 @@ paths:
         '204':
           description: Trail deleted successfully
         '404':
-  
           description: Trail not found
   /users:
     get:

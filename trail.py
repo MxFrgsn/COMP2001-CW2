@@ -1,7 +1,7 @@
 # trail.py
 from flask import abort, make_response
 from config import db
-from models import trail_schema, trails_schema, Trail, Location,TrailAttraction 
+from models import trail_schema, trails_schema, Trail, Location, TrailAttraction 
 
 def create(trail): # done swagger, need test
     trail_id = trail.get('trail_id')
@@ -32,16 +32,20 @@ def updateTrailName(trail_name,trail_id):
         db.session.commit()
         return {"message": f"Trail with ID {trail_id} updated successfully."}, 200
     else:
-        abort(404, f"Trail with trail_id {trail_id} not found")
+        abort(404, f"Trail with ID {trail_id} not found")
     
-def delete(trail_id): # done swagger, need test
+def delete(trail_id): # done swagger, done test
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
+    existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all()
+
     if existing_trail:
+        for attraction in existing_trail_attractions:
+            db.session.delete(attraction)
         db.session.delete(existing_trail)
         db.session.commit()
-        return make_response(f"trail with last name {trail_id} has been deleted", 200)
+        return make_response(f"trail with ID {trail_id} has been deleted", 200)
     else:
-        abort(404, f"trail with last name {trail_id} not found")
+        abort(404, f"trail with ID {trail_id} not found")
 
 # should add update for every attribute of trail
 # should add a function to view what locations a trail has

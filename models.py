@@ -211,7 +211,7 @@ class User(db.Model):
 class LocationPoint(db.Model):
     __tablename__ = 'Location_Point'
     __table_args__ = {'schema': 'CW2'}
-    location_point_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False, primary_key=True)
+    location_point_id = db.Column(db.Integer, nullable=False, primary_key=True)
     lagitude = db.Column(db.DECIMAL, nullable=False)
     longitude = db.Column(db.DECIMAL, nullable=False)
     description = db.Column(db.String)
