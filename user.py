@@ -5,10 +5,9 @@ from models import users_schema, user_schema, User
 
 def create():
     user_data = request.get_json()  
-    if not user_data:  
-        abort(400, "No input data provided")
     user_id = user_data.get('user_id')
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
+    
     if existing_user is None:
         new_user = user_schema.load(user_data, session=db.session)
         db.session.add(new_user)

@@ -247,6 +247,13 @@ components:
       required: true
       schema:
         type: string
+    attraction_id:
+      name: 'attraction_id'
+      in: 'path'
+      description: 'Unique identifier of the attraction to search for'
+      required: true
+      schema:
+        type: string
 
 paths:
   /trails:
@@ -420,28 +427,65 @@ paths:
           description: Trail attraction created successfully
         '400':
           description: Request failed, please retry.
-  /trail_attraction/{trail_attraction_id}:
-    get:
-      operationId: 'trail_attraction.read_one'
-      tags:
-        - 'trail_attraction'
-      summary: Get one trail attraction by ID
-      parameters:
-        - $ref: '#/components/parameters/trail_attraction_id'
-      responses:
-        '200':
-          description: Successful response, Trail attraction exists
-        '404':
-          description: Trail attraction not found
     delete:
       operationId: 'trail_attraction.delete'
       tags:
         - 'trail_attraction'
-      summary: Delete a trail attraction by ID
-      parameters:
-        - $ref: '#/components/parameters/trail_attraction_id'
+      summary: 'Delete one or all attractions tied to a trail'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/TrailAttraction'
+              properties:
+                delete_all:
+                  type: boolean
+                  description: 'Flag to delete all attractions linked to the trail'
+                  example: true
+              required:
+                - trail_id
+                - attraction_id
       responses:
         '204':
-          description: Trail attraction deleted successfully
+          description: 'Attraction(s) successfully deleted'
+        '400':
+          description: 'Bad Request, required fields are missing or invalid'
         '404':
-          description: Trail attraction not found
+          description: 'Not Found, trail or attraction not found'
+  /trail_attraction/{id}:
+    get:
+      operationId: 'trail_attraction.read_attractions_or_trails'
+      tags:
+        - 'trail_attraction'
+      summary: Retrieve all attractions tied to a trail or all trails tied to an attraction
+      parameters:
+        - name: 'id'
+          in: 'path'
+          description: 'The ID of either the trail or attraction, depending on the request type'
+          required: true
+          schema:
+            type: string
+        - name: 'type'
+          in: 'query'
+          description: 'Specify whether to fetch attractions tied to a trail or trails tied to an attraction. Use "trail" or "attraction".'
+          required: true
+          schema:
+            type: string
+            enum:
+              - trail
+              - attraction
+      responses:
+        '200':
+          description: Successfully retrieved data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrailAttraction'
+        '400':
+          description: Request failed, please retry.
+  
+  

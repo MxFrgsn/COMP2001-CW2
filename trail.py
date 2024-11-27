@@ -5,11 +5,9 @@ from models import trail_schema, trails_schema, Trail, TrailAttraction
 
 def create(): 
     trail_data = request.get_json()  
-    if not trail_data:  
-        abort(400, "No input data provided")
-
     trail_id = trail_data.get('trail_id')
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
+
     if existing_trail is None:
         new_trail = trail_schema.load(trail_data, session=db.session)
         db.session.add(new_trail)
@@ -65,7 +63,6 @@ def delete(trail_id):
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
     # Deleting all attractions associated with the trail, as trail id is a foreign key in the trail attraction table
     existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all() 
-
 
     if existing_trail:
         for attraction in existing_trail_attractions:
