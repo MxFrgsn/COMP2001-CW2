@@ -2,54 +2,15 @@
 from marshmallow import fields
 from marshmallow import validates, ValidationError
 from config import db, ma
-
-class Location(db.Model): # can i access a valid location from an avaliable database?
-    __tablename__ = 'Location'
-    __table_args__ = {'schema': 'CW2'}
-    location_id = db.Column(db.Integer, primary_key=True)
-    country = db.Column(db.String, nullable=False)
-    county = db.Column(db.String, nullable=False)
-    city = db.Column(db.String, nullable=False)
-
-    @validates('location_id')
-    def validate_location_id(self, value):
-        acronym = value[0:3]
-        numbers = value[3:8]
-        if len(value) != 8:
-            raise ValidationError('Location ID must be 8 characters long')
-        if acronym!= 'LOC':
-            raise ValidationError('Location ID must start with LOC')
-        if numbers.isdigit() == False:
-            raise ValidationError('Location ID must end with 5 numbers')
-        return value
-    
-    @validates('country')
-    def validate_country(self, value):
-        if len(value) < 3:
-            raise ValidationError('Country must be at least 3 characters')
-        return value
-    
-    @validates('county')
-    def validate_county(self, value):
-        if len(value) < 3:
-            raise ValidationError('County must be at least 3 characters')
-        return value
-    
-    @validates('city')
-    def validate_city(self, value):
-        if len(value) < 3:
-            raise ValidationError('City must be at least 3 characters')
-        value = round(value, 2)
-        return value
 class Trail(db.Model):
     __tablename__ = 'Trail'
     __table_args__ = {'schema': 'CW2'}
     trail_id = db.Column(db.String, primary_key=True) 
-    location_id = db.Column(db.Integer, db.ForeignKey('CW2.Location.location_id'), nullable=False)  
     owner_id = db.Column(db.String, db.ForeignKey('CW2.User.user_id'), nullable=False)  
     trail_name = db.Column(db.String, nullable=False, unique=True) 
     summary = db.Column(db.String)
     description = db.Column(db.String)
+    location = db.Column(db.Integer, nullable=False)  
     traffic = db.Column(db.String, nullable=False)
     difficulty = db.Column(db.String, nullable=False)
     length = db.Column(db.Float, nullable=False)
@@ -64,7 +25,6 @@ class Trail(db.Model):
     location_pt_4 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
     location_pt_5 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
 
-    location = db.relationship("Location", backref="trails")
     owner = db.relationship("User", backref="trails")
     location_point_1 = db.relationship("LocationPoint", foreign_keys=[location_pt_1])
     location_point_2 = db.relationship("LocationPoint", foreign_keys=[location_pt_2])
@@ -107,6 +67,14 @@ class Trail(db.Model):
         if len(value) > 1500:
             raise ValidationError('Trail description must be at less than 1500 characters') 
         return value 
+
+    @validates('location')
+    def validate_location(self, value):
+        if value < 3:
+            raise ValidationError('Location must be greater than 3')
+        if value > 255:
+            raise ValidationError('Location must be less than 9999')
+        return value
     
     @validates('traffic')
     def validate_traffic(self, value):
@@ -139,7 +107,6 @@ class Trail(db.Model):
         if minutes < 0 or minutes > 59:
             raise ValidationError('Minutes must be between 00 and 59.')
         return value
-
 
     @validates('elevation_gain') # Must ensure its in meters
     def validate_elevation_gain(self, value): 
@@ -287,30 +254,24 @@ class TrailAttraction(db.Model):
     Attraction = db.relationship('Attraction', backref='trail_attractions')
     trail = db.relationship('Trail', backref= 'trail_attractions')
 
-
-class LocationSchema(ma.SQLAlchemyAutoSchema):
-    location_id = fields.Str()
-    country = fields.Str()
-    county = fields.Str()
-    city = fields.Str()
-    class Meta:
-        model = User
-        load_instance = True
-        sqla_session = db.session
-Location_schema = LocationSchema()
 class TrailSchema(ma.SQLAlchemyAutoSchema):
     trail_id = fields.Str(required=True)
     trail_name = fields.Str(required=True)
+    summary = fields.Str(missing=None)
+    description = fields.Str(missing=None)
+    location = fields.Str(required=True)
     difficulty = fields.Str(required=True)
     length = fields.Float(required=True)
     traffic = fields.Str(required=True)
     duration = fields.Str(missing=None)
     elevation_gain = fields.Integer(missing=None)  
     route_type = fields.Str(missing=None)  
-    summary = fields.Str(missing=None)
-    description = fields.Str(missing=None)
     owner_id = fields.Str(required=True)
-    location = fields.Nested(LocationSchema, required=True)
+    location_pt_1 = fields.Str()
+    location_pt_2 = fields.Str()
+    location_pt_3 = fields.Str()
+    location_pt_4 = fields.Str()
+    location_pt_5 = fields.Str()
     class Meta:
         model = Trail
         load_instance = True

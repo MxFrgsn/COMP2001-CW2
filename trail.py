@@ -1,13 +1,17 @@
 # trail.py
-from flask import abort, make_response
+from flask import abort, make_response, request
 from config import db
-from models import trail_schema, trails_schema, Trail, Location, TrailAttraction 
+from models import trail_schema, trails_schema, Trail, TrailAttraction 
 
-def create(trail): # done swagger, need test
-    trail_id = trail.get('trail_id')
-    existing_trail = trail.query.filter(trail.trail_id == trail_id).one_or_none()
+def create(): # done swagger, done test
+    trail_data = request.get_json()  
+    if not trail_data:  
+        abort(400, "No input data provided")
+
+    trail_id = trail_data.get('trail_id')
+    existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
     if existing_trail is None:
-        new_trail = trail_schema.load(trail, session=db.session)
+        new_trail = trail_schema.load(trail_data, session=db.session)
         db.session.add(new_trail)
         db.session.commit()
         return trail_schema.dump(new_trail), 201
@@ -22,7 +26,7 @@ def read_one(trail_id): #done swagger, done test
         abort(404, f"Trail with trail_id {trail_id} not found")
 
 def read_all(): # done swagger, done test
-    trails = db.session.query(Trail).join(Location).outerjoin(TrailAttraction).all()
+    trails = db.session.query(Trail).all()
     return trails_schema.dump(trails)
 
 def updateTrailName(trail_name,trail_id):

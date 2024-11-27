@@ -12,10 +12,9 @@ servers:
 
 components:
   schemas:
-    TrailView:
+    Trail:
       type: object
       required:
-        - trail_id
         - trail_name
         - difficulty
         - length
@@ -66,92 +65,21 @@ components:
           type: string
           description: "Unique identifier of the trail owner"
         location:
-          $ref: "#/components/schemas/Location"
-    Location:
-      type: object
-      required:
-        - location_id
-        - country
-        - county
-        - city
-      properties:
-        location_id:
           type: string
-          description: "Unique identifier for the location"
-        country:
-          type: string
-          description: "Country of the location"
-        county:
-          type: string
-          description: "County of the region"
-        city:
-          type: string
-          description: "City of the trail location"
-    Trail:
-      type: object
-      required:
-        - trail_name
-        - difficulty
-        - length
-        - traffic
-        - owner_id
-        - location_id
-      properties:
-        trail_name:
-          type: string
-          description: "Name of the trail"
-        difficulty:
-          type: string
-          description: "Difficulty level of the trail"
-          enum:
-            - easy
-            - moderate
-            - hard
-        length:
-          type: number
-          format: float
-          description: "Length of the trail in kilometers"
-        traffic:
-          type: string
-          description: "Expected traffic on the trail"
-          enum:
-            - light
-            - moderate
-            - heavy
-        duration:
-          type: string
-          description: "Approximate duration to complete the trail (optional)"
-        elevation_gain:
-          type: integer
-          description: "Elevation gain in meters (optional)"
-        route_type:
-          type: string
-          description: "Type of route, e.g., loop, out-and-back, etc. (optional)"
-        summary:
-          type: string
-          description: "Short summary of the trail (optional)"
-        description:
-          type: string
-          description: "Detailed description of the trail (optional)"
-        owner_id:
-          type: string
-          description: "Unique identifier of the trail owner"
-        location_id:
-          type: string
-          description: "Unique identifier of the trail location"
-        location_point_1:
+          description: "Location of the trail"
+        location_pt_1:
           type: string
           description: "First point of the trail location"
-        location_point_2:
+        location_pt_2:
           type: string
           description: "Second point of the trail location"
-        location_point_3:
+        location_pt_3:
           type: string
           description: "Third point of the trail location"
-        location_point_4:
+        location_pt_4:
           type: string
           description: "Fourth point of the trail location"
-        location_point_5:
+        location_pt_5:
           type: string
           description: "Fifth point of the trail location"
     User:
@@ -161,6 +89,7 @@ components:
         - username
         - email
         - password
+        - role
       properties:
         user_id:
           type: string
@@ -175,6 +104,12 @@ components:
         password:
           type: string
           description: "Password of the user"
+        role:
+          type: string
+          description: "Role of the user"
+          enum:
+            - admin
+            - user
   parameters:
     trail_id:
       name: "trail_id"
@@ -204,7 +139,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TrailView'
+                $ref: '#/components/schemas/Trail'
         '400':
           description: Request failed, please retry.
     post:
@@ -217,7 +152,6 @@ paths:
         content:
           application/json:
             schema:
-              x-body-name: 'trail'
               $ref: '#/components/schemas/Trail'
       responses:
         '201':

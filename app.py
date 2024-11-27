@@ -17,7 +17,6 @@ if __name__ == '__main__': # dont need to when using web server
 # need to comment current code
 # need to ensure im using my web.socem.plymouth.ac.uk web server not my local one
 
-# create a database with tables for countries, counties and cities -> or find online database????
 # create sql trigger or python function to ensure IDs for each table are unique automatically!!!
 
 # should i specify the length of every string in models.py?
