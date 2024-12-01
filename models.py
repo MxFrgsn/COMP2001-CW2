@@ -228,11 +228,11 @@ class Attraction(db.Model):
 class TrailAttraction(db.Model):
     __tablename__ = 'Trail_Attraction'
     __table_args__ = ({'schema': 'CW2'})
-    attraction_id = db.Column(db.String, db.ForeignKey('CW2.Attraction.attraction_id'), nullable=False,primary_key=True)
-    trail_id = db.Column(db.String, db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
+    attraction_id = db.Column(db.String(8), db.ForeignKey('CW2.Attraction.attraction_id'), nullable=False,primary_key=True)
+    trail_id = db.Column(db.String(8), db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
 
     Attraction = db.relationship('Attraction', backref='trail_attractions')
-    trail = db.relationship('Trail', backref= 'trail_attractions')
+    Trail = db.relationship('Trail', backref= 'trail_attractions')
 
 class TrailSchema(ma.SQLAlchemyAutoSchema):
     trail_id = fields.Str(required=True)

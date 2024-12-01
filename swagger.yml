@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   title: 'CW2 Coursework'
   description: 'Trail Service Microservice'
-  version: '1.0.0'
+  version: '1.0.1'
 
 servers:
  - url: '/api' #/auth/api/users
@@ -431,7 +431,7 @@ paths:
           description: User updated successfully
         '404':
           description: User not found
-  /trail_attraction: # working on this
+  /trail_attraction: 
     get:
       operationId: 'trail_attraction.read_all'
       tags:

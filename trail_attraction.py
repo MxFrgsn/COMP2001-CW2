@@ -28,7 +28,7 @@ def read_attractions_or_trails(id, type):
         return trail_attractions_schema.dump(trail_attraction)
     else:
         abort(404, "No Trail Attraction found for the given ID")
-
+    
 def read_all(): 
     trail_attractions = db.session.query(TrailAttraction).all() 
     return trail_attractions_schema.dump(trail_attractions)

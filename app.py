@@ -27,6 +27,7 @@ if __name__ == '__main__':
 
     # SPECIFIC:
     # need to comment current code
+    # write readme file
     # should i be able to view trails based on the name or user id of the trail owner? -> doable using query in read_all function 
     # but need to link tables in swagger and when dumping the data from the schema.
 

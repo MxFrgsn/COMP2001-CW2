@@ -14,7 +14,7 @@ def create():
         return attraction_schema.dump(new_attraction), 201
     else:
         abort(406, f"Attraction with attraction ID {attraction_id} already exists")
-
+        
 def delete(attraction_id): 
     existing_attraction = Attraction.query.filter(Attraction.attraction_id == attraction_id).one_or_none()
     existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.attraction_id == attraction_id).all()
