@@ -73,13 +73,13 @@ components:
           description: 'Short summary of the trail'
           minLength: 10
           maxLength: 255
-          nulllable: true
+          nullable: true
         description:
           type: string
           description: 'Detailed description of the trail'
           minLength: 100
           maxLength: 1500
-          nulllable: true
+          nullable: true
         owner_id:
           type: string
           description: 'Unique identifier of the trail owner'
@@ -163,13 +163,13 @@ components:
           description: 'Short summary of the trail'
           minLength: 10
           maxLength: 255  
-          nulllable: true
+          nullable: true
         description:
           type: string
           description: 'Detailed description of the trail'
           minLength: 100
           maxLength: 1500
-          nulllable: true
+          nullable: true
         location:
           type: string
           description: 'Location of the trail'
@@ -339,18 +339,21 @@ components:
           description: 'New longitude of the location point'
           minimum: -180.0
           maximum: 180.0
-    User_authentication: # working here
+    User_Authentication:
       type: object
       required:
-        - username
+        - email
         - password
-      properties:
-        username:
+      properties: 
+        email:
           type: string
           description: 'Username of the user'
+          maxLength: 255
         password:
           type: string
           description: 'Password of the user'
+          minLength: 8
+          maxLength: 255
   parameters:
     trail_id:
       name: 'trail_id'
@@ -464,6 +467,25 @@ paths:
           description: Trail updated successfully
         '404':
           description: Trail not found
+  /authenicate:
+    post: 
+      operationId: 'user.authenication'
+      tags:
+        - 'users'
+      summary: Logins a user using univeristy auth API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User_Authentication'
+      responses:
+        '200':
+          description: User logged in successfully
+        '404':
+          description: User not found
+        '204':
+          description: User authenticated successfully
   /users:
     get:
       operationId: 'user.read_all'
@@ -494,24 +516,6 @@ paths:
         '400':
           description: Request failed, please retry.
   /users/{user_id}:
-    post: # working here
-      operationId: 'user.authenication'
-      tags:
-        - 'users'
-      summary: Logins a user using univeristy auth API
-      parameters:
-        - $ref: '#/components/parameters/user_id'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User_authentication'
-      responses:
-        '200':
-          description: User logged in successfully
-        '404':
-          description: User not found
     get:
       operationId: 'user.read_one'
       tags:

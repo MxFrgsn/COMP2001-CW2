@@ -1,7 +1,8 @@
 # user.py
-from flask import abort, make_response, request, requests
+from flask import abort, make_response, request
 from config import db
 from models import users_schema, user_schema, User
+import requests
 
 def create():
     user_data = request.get_json()  
@@ -62,7 +63,8 @@ def delete(user_id):
 
 def authenication():
     auth_url = 'https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users'
-    credentials = { 'email': existing_user.email, 'password': existing_user.password }
+    user_data = request.get_json()  
+    credentials = {'email': user_data['email'], 'password': user_data['password']}
     response = requests.post(auth_url, json=credentials)
     if response.status_code == 200:
         try:
