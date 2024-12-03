@@ -47,18 +47,18 @@ class Trail(db.Model):
     @validates('trail_name')
     def validate_trail_name(self, value):
         if len(value) < 5:
-            raise ValidationError('Trail name must be at least 3 characters')
+            raise ValidationError('Trail name must be at least 5 characters')
         return value
 
     @validates('summary')
     def validate_trail_summary(self, value):
-        if len(value) < 10 & len(value)!=0:
+        if len(value) < 10 and len(value)!=0:
             raise ValidationError('Trail summary must be at least 50')
         return value
     
     @validates('description')
     def validate_trail_description(self, value):
-        if len(value) < 100 & len(value)!=0:
+        if len(value) < 100 and len(value)!=0:
             raise ValidationError('Trail description must be at least 100 characters')
         return value 
 
@@ -177,22 +177,18 @@ class LocationPoint(db.Model):
             raise ValidationError('Location Point ID must end with 5 numbers')
         return value
     
-    @validates('lagitude')
-    def validate_lagitude(self, value):
+    @validates('latitude')
+    def validate_latitude(self, value):
         if not (-90.0 <= value <= 90.0):
             raise ValidationError('Latitude must be between -90.00 and 90.00')
-        if len(str(value).split(".")[1]) > 6:
-            raise ValidationError('Latitude must have at most 6 decimal places')
         return value
-
+    
     @validates('longitude')
     def validate_longitude(self, value):
         if not (-180.0 <= value <= 180.0):
             raise ValidationError('Longitude must be between -180.00 and 180.00')
-        if len(str(value).split(".")[1]) > 6:
-            raise ValidationError('Longitude must have at most 6 decimal places')
         return value
-    
+
     @validates('description')
     def validate_description(self, value):
         if len(value) < 3:

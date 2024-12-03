@@ -25,9 +25,13 @@ components:
         trail_id:
           type: string
           description: 'Unique identifier for the trail'
+          maxLength: 8
+          pattern: '^TRL\d{5}$'
         trail_name:
           type: string
           description: 'Name of the trail'
+          minLength: 5
+          maxLength: 255
         difficulty:
           type: string
           description: 'Difficulty level of the trail'
@@ -39,6 +43,8 @@ components:
           type: number
           format: float
           description: 'Length of the trail in kilometers'
+          minimum: 0.0
+          maximum: 99999.99
         traffic:
           type: string
           description: 'Expected traffic on the trail'
@@ -48,49 +54,77 @@ components:
             - heavy
         duration:
           type: string
-          description: 'Approximate duration to complete the trail '
+          description: 'Approximate duration to complete the trail'
+          pattern: '^\d{2}:\d{2}$'
         elevation_gain:
           type: integer
-          description: 'Elevation gain in meters '
+          description: 'Elevation gain in meters'
+          minimum: 0
+          maximum: 9999
         route_type:
           type: string
-          description: 'Type of route, e.g., loop, out-and-back, etc. '
+          description: 'Type of route, e.g., loop, out-and-back, etc.'
+          enum:
+            - loop
+            - out and back
+            - point to point
         summary:
           type: string
-          description: 'Short summary of the trail '
+          description: 'Short summary of the trail'
+          minLength: 10
+          maxLength: 255
+          nulllable: true
         description:
           type: string
-          description: 'Detailed description of the trail '
+          description: 'Detailed description of the trail'
+          minLength: 100
+          maxLength: 1500
+          nulllable: true
         owner_id:
           type: string
           description: 'Unique identifier of the trail owner'
+          maxLength: 8
+          pattern: '^USR\d{5}$'
         location:
           type: string
           description: 'Location of the trail'
+          maxLength: 255
         location_pt_1:
           type: string
           description: 'First point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         location_pt_2:
           type: string
           description: 'Second point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         location_pt_3:
           type: string
           description: 'Third point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         location_pt_4:
           type: string
           description: 'Fourth point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         location_pt_5:
           type: string
           description: 'Fifth point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
     Trail_Update:
       type: object
       properties:
         trail_name:
           type: string
-          description: 'New name of the trail'
+          description: 'Name of the trail'
+          minLength: 5
+          maxLength: 255
         difficulty:
           type: string
-          description: 'New difficulty level of the trail'
+          description: 'Difficulty level of the trail'
           enum:
             - easy
             - moderate
@@ -98,10 +132,12 @@ components:
         length:
           type: number
           format: float
-          description: 'New length of the trail in kilometers'
+          description: 'Length of the trail in kilometers'
+          minimum: 0.0
+          maximum: 99999.99
         traffic:
           type: string
-          description: 'New expected traffic on the trail'
+          description: 'Expected traffic on the trail'
           enum:
             - light
             - moderate
@@ -109,49 +145,78 @@ components:
         duration:
           type: string
           description: 'Approximate duration to complete the trail'
+          pattern: '^\d{2}:\d{2}$'
         elevation_gain:
           type: integer
-          description: 'New elevation gain in meters'
+          description: 'Elevation gain in meters'
+          minimum: 0
+          maximum: 9999
         route_type:
           type: string
-          description: 'New type of route, e.g., loop, out-and-back, etc.'
+          description: 'Type of route, e.g., loop, out-and-back, etc.'
+          enum:
+            - loop
+            - out and back
+            - point to point
         summary:
           type: string
-          description: 'New short summary of the trail'
+          description: 'Short summary of the trail'
+          minLength: 10
+          maxLength: 255  
+          nulllable: true
         description:
           type: string
-          description: 'New detailed description of the trail'
+          description: 'Detailed description of the trail'
+          minLength: 100
+          maxLength: 1500
+          nulllable: true
         location:
           type: string
-          description: 'New location of the trail'
+          description: 'Location of the trail'
+          maxLength: 255
         location_pt_1:
           type: string
-          description: 'New first point of the trail location'
+          description: 'First point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         location_pt_2:
           type: string
-          description: 'New second point of the trail location'
+          description: 'Second point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         location_pt_3:
           type: string
-          description: 'New third point of the trail location'
+          description: 'Third point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         location_pt_4:
           type: string
-          description: 'Newvfourth point of the trail location'
+          description: 'Fourth point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         location_pt_5:
           type: string
-          description: 'New fifth point of the trail location'
+          description: 'Fifth point of the trail location'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
     User_Update:
       type: object
       properties:
         username:
           type: string
           description: 'New username of the user'
+          minLength: 3
+          maxLength: 255
         email:
           type: string
           format: email
           description: ' New email address of the user'
+          maxLength: 255
         password:
           type: string
           description: 'new Password of the user'
+          minLength: 8
+          maxLength: 255
         role:
           type: string
           description: 'new Role of the user'
@@ -170,16 +235,23 @@ components:
         user_id:
           type: string
           description: 'Unique identifier for the user'
+          maxLength: 8
+          pattern: '^USR\d{5}$'
         username:
           type: string
           description: 'Username of the user'
+          minLength: 3
+          maxLength: 255
         email:
           type: string
           format: email
           description: 'Email address of the user'
+          maxLength: 255
         password:
           type: string
           description: 'Password of the user'
+          minLength: 8
+          maxLength: 255
         role:
           type: string
           description: 'Role of the user'
@@ -195,9 +267,13 @@ components:
         trail_id:
           type: string
           description: 'Unique identifier of the trail'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         attraction_id:
           type: string
           description: 'Unique identifier of the attraction'
+          maxLength: 8
+          pattern: '^ATT\d{5}$'
     Attraction:
       type: object
       required:
@@ -207,9 +283,13 @@ components:
         attraction_id:
           type: string
           description: 'Unique identifier for the attraction'
+          maxLength: 8
+          pattern: '^ATT\d{5}$'
         attraction_name:
           type: string
           description: 'Name of the attraction'
+          minLength: 3
+          maxLength: 255
     LocationPoint:
       type: object
       required:
@@ -220,31 +300,57 @@ components:
         location_point_id:
           type: string
           description: 'Unique identifier for the location point'
+          maxLength: 8
+          pattern: '^LPT\d{5}$'
         latitude:
           type: number
           format: float
           description: 'Latitude of the location point'
+          minimum: -90.0
+          maximum: 90.0
         longitude:
           type: number
           format: float
           description: 'Longitude of the location point'
+          minimum: -180.0
+          maximum: 180.0
         description:
           type: string
           description: 'Description of the location point'
+          minLength: 3
+          maxLength: 255
     LocationPoint_Update:
       type: object
       properties:
         description:
             type: string
             description: 'New description of the location point'
+            minLength: 3
+            maxLength: 255
         latitude:
           type: number
           format: float
           description: 'New latitude of the location point'
+          minimum: -90.0
+          maximum: 90.0
         longitude:
           type: number
           format: float
           description: 'New longitude of the location point'
+          minimum: -180.0
+          maximum: 180.0
+    User_authentication: # working here
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: 'Username of the user'
+        password:
+          type: string
+          description: 'Password of the user'
   parameters:
     trail_id:
       name: 'trail_id'
@@ -281,7 +387,6 @@ components:
       required: false
       schema:
         type: string
-
 paths:
   /trails:
     get:
@@ -389,6 +494,24 @@ paths:
         '400':
           description: Request failed, please retry.
   /users/{user_id}:
+    post: # working here
+      operationId: 'user.authenication'
+      tags:
+        - 'users'
+      summary: Logins a user using univeristy auth API
+      parameters:
+        - $ref: '#/components/parameters/user_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User_authentication'
+      responses:
+        '200':
+          description: User logged in successfully
+        '404':
+          description: User not found
     get:
       operationId: 'user.read_one'
       tags:
@@ -500,7 +623,7 @@ paths:
             type: string
         - name: 'type'
           in: 'query'
-          description: 'Specify whether to fetch attractions tied to a trail or trails tied to an attraction. Use "trail" or "attraction".'
+          description: 'Specify whether to fetch attractions tied to a trail or trails tied to an attraction.'
           required: true
           schema:
             type: string

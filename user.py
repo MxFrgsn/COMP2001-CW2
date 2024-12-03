@@ -1,5 +1,5 @@
 # user.py
-from flask import abort, make_response, request
+from flask import abort, make_response, request, requests
 from config import db
 from models import users_schema, user_schema, User
 
@@ -60,4 +60,18 @@ def delete(user_id):
     else:
         abort(404, f"User with user ID {user_id} not found")
 
+def authenication():
+    auth_url = 'https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users'
+    credentials = { 'email': existing_user.email, 'password': existing_user.password }
+    response = requests.post(auth_url, json=credentials)
+    if response.status_code == 200:
+        try:
+            json_response = response.json()
+            print("Authenticated successfully:",json_response)
+        except requests.JSONDecodeError:
+            print("Response is not valid JSON. Raw response content:")
+            print(response.text)
+    else:
+        print(f"Authentication failed with status code {response.status_code}")
+        print("Response content:", response.text)
 
