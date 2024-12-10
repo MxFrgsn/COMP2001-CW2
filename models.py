@@ -1,6 +1,5 @@
 # models.py
-from marshmallow import fields
-from marshmallow import validates, ValidationError
+from marshmallow import fields, validates, ValidationError
 from config import db, ma
 class Trail(db.Model):
     __tablename__ = 'Trail'
