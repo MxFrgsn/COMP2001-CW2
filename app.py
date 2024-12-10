@@ -8,7 +8,7 @@ app.add_api(config.basedir / 'swagger.yml')
 
 @app.route('/')
 def home():
-    return render_template('home.html', trails = Trail.query.all())
+    return render_template('home.html')
 
 if __name__ == '__main__': 
     app.run(host='0.0.0.0',port=8000,debug=True)
@@ -44,10 +44,6 @@ if __name__ == '__main__':
     # need to ensure im using my web.socem.plymouth.ac.uk web server not my local one
     # use authentication API: https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users 
 
-
-
-
-
 # IIS Web Server
 # Your web page is available at:
 # http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson
@@ -63,3 +59,7 @@ if __name__ == '__main__':
 # Your Database is: COMP2001_MFerguson
 # Your Username is:MFerguson
 # Your Password is: GjiF140*
+
+# Docker Image: mxfrgsn/comp2001_cw2
+# GitHub Repository: https://github.com/MxFrgsn/COMP2001-CW2
+# docker run -p 8000:8000 mxfrgsn/comp2001_cw2

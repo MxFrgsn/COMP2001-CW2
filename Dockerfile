@@ -24,7 +24,3 @@ RUN apt-get -y clean
 EXPOSE 8000
 
 CMD ["python", "app.py"]
-
-# Docker Image: mxfrgsn/comp2001_cw2
-# GitHub Repository: https://github.com/MxFrgsn/COMP2001-CW2
-# docker run -p 8000:8000 mxfrgsn/comp2001_cw2
