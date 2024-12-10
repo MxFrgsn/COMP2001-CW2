@@ -68,12 +68,9 @@ def authenication():
     response = requests.post(auth_url, json=credentials)
     if response.status_code == 200:
         try:
-            json_response = response.json()
-            print("Authenticated successfully:",json_response)
+            return make_response(f"Authenticated request sent successfully, are you logged in? \n{response.text}",200)
         except requests.JSONDecodeError:
-            print("Response is not valid JSON. Raw response content:")
-            print(response.text)
+            return make_response(404,f"Response is not valid JSON. Raw response content: {response.text} \nPlease try again")
     else:
-        print(f"Authentication failed with status code {response.status_code}")
-        print("Response content:", response.text)
+        return make_response(404,f"Authentication failed {response.text} \nPlease try again")
 

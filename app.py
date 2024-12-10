@@ -11,8 +11,6 @@ def home():
     return render_template('home.html', trails = Trail.query.all())
 
 if __name__ == '__main__': 
-    # dont need to when using web server 
-    # need to use web server /auth/api/users
     app.run(host='0.0.0.0',port=8000,debug=True)
 
 
@@ -34,6 +32,7 @@ if __name__ == '__main__':
     # should i be able to view the attractions of a trail? in the read_one/read_all function? 
     # should add a function to view what users a user owns in user.py? 
     # should i add a update to trail_attraction.py and attractions.py?
+    # need to add crud stored procedures to the sql database for each table!!!
 
 
     # do query to search trails by name, location, dfifficulty, traffic, -> maybe a range if included? length duration, elevation gain, route type, 
