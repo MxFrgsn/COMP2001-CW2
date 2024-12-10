@@ -41,3 +41,13 @@ def read_one(attraction_id):
     else:
         abort(404, f"Attraction with attraction ID {attraction_id} not found")
 
+def update(attraction_id):
+    attraction_data = attraction_data.get('attraction_id')
+    existing_attraction = Attraction.query.filter(Attraction.attraction_id == attraction_id).one_or_none()
+    if existing_attraction:
+        if 'attraction_name' in attraction_data:
+            existing_attraction.attraction_name = attraction_data['attraction_name']
+        db.session.commit()
+        return make_response(f"Attraction with ID {attraction_id} has been updated successfully.", 200)
+    else:
+        abort(404, f"Attraction with ID {attraction_id} not found")

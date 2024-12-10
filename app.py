@@ -17,9 +17,6 @@ if __name__ == '__main__':
 
 # OVERALL:
 # here are several parts to the micro-service that you will need to create
-# • Stored procedures to manage the data (CRUD) -> need to create a stored procedure in the sql 
-# • A View to combine the data from different tables -> need to create a view in the sql
-# • API endpoints for creating, reading, updating and deleting a given resource 
 # • Protect against OWASP Top 10 vulnerabilities where possible -> need to add authentication to the API, done sql injection with sql alchemy
 # • Must ensure it is RESTful 
 

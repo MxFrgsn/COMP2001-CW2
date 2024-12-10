@@ -687,6 +687,24 @@ paths:
           description: Successful response, Attraction exists
         '404':
           description: Attraction not found
+    patch:
+      operationId: 'attraction.update'
+      tags:
+        - 'attractions'
+      summary: Update an attraction by ID
+      parameters:
+        - $ref: '#/components/parameters/attraction_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attraction'
+      responses:
+        '200':
+          description: Attraction updated successfully
+        '404':
+          description: Attraction not found
     delete:
       operationId: 'attraction.delete'
       tags:
