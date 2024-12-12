@@ -1,6 +1,7 @@
 # models.py
 from marshmallow import fields, validates, ValidationError
 from config import db, ma
+import re
 class Trail(db.Model):
     __tablename__ = 'Trail'
     __table_args__ = {'schema': 'CW2'}
@@ -75,6 +76,7 @@ class Trail(db.Model):
     
     @validates('length')
     def validate_length(self, value): # Must ensure its in km
+        value = round(value, 2)
         if value < 0.00:
             raise ValidationError('Length must be positive')
         if value > 99999.99:
@@ -136,7 +138,7 @@ class User(db.Model):
     
     @validates('email')
     def validate_email(self, value):
-        if '@' not in value and '.' not in value:
+        if not re.match(r'^[^@]+@[^@]+\.[^@]{2,}$', value):
             raise ValidationError('Invalid email address')
         if len(value) < 3:
             raise ValidationError('Email must be at least 3 characters')

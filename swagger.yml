@@ -210,6 +210,7 @@ components:
         email:
           type: string
           format: email
+          pattern: ^[^@]+@[^@]+\.[^@]{2,}$
           description: ' New email address of the user'
           maxLength: 255
         password:
@@ -245,6 +246,7 @@ components:
         email:
           type: string
           format: email
+          pattern: ^[^@]+@[^@]+\.[^@]{2,}$
           description: 'Email address of the user'
           maxLength: 255
         password:
@@ -359,28 +361,28 @@ components:
       name: 'trail_id'
       in: 'path'
       description: 'Unique identifier of the trail to search for'
-      required: true
+      required: false
       schema:
         type: string
     user_id:
       name: 'user_id'
       in: 'path'
       description: 'Unique identifier of the user to search for'
-      required: true
+      required: false
       schema:
         type: string
     attraction_id:
       name: 'attraction_id'
       in: 'path'
       description: 'Unique identifier of the attraction to search for'
-      required: true
+      required: false
       schema:
         type: string
     location_point_id:
       name: 'location_point_id'
       in: 'path'
       description: 'Unique identifier of the location point to search for'
-      required: true
+      required: false
       schema:
         type: string
     name:

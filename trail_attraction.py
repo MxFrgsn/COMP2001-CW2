@@ -39,8 +39,9 @@ def delete():
     attraction_id = data.get('attraction_id')
     delete_all = data.get('delete_all', False)
 
-    if not trail_id or not attraction_id:
-        abort(400, "Both 'trail_id' and 'attraction_id' are required")
+    if not delete_all:
+        if not trail_id or not attraction_id:
+            abort(400, "Both 'trail_id' and 'attraction_id' are required")
 
     if delete_all:  
         existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all()
