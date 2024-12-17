@@ -232,23 +232,23 @@ class TrailAttraction(db.Model):
     Trail = db.relationship('Trail', backref= 'trail_attractions')
 
 class TrailSchema(ma.SQLAlchemyAutoSchema):
-    trail_id = fields.Str(required=True)
-    trail_name = fields.Str(required=True)
-    summary = fields.Str(missing=None)
-    description = fields.Str(missing=None)
-    location = fields.Str(required=True)
-    difficulty = fields.Str(required=True)
+    trail_id = fields.String(required=True)
+    trail_name = fields.String(required=True)
+    summary = fields.String(load_default=None)
+    description = fields.String(load_default=None)
+    location = fields.String(required=True)
+    difficulty = fields.String(required=True)
     length = fields.Float(required=True)
-    traffic = fields.Str(required=True)
-    duration = fields.Str(missing=None)
+    traffic = fields.String(required=True)
+    duration = fields.String(load_default=None)
     elevation_gain = fields.Integer(missing=None)  
-    route_type = fields.Str(missing=None)  
-    owner_id = fields.Str(required=True)
-    location_pt_1 = fields.Str()
-    location_pt_2 = fields.Str()
-    location_pt_3 = fields.Str()
-    location_pt_4 = fields.Str()
-    location_pt_5 = fields.Str()
+    route_type = fields.String(load_default=None)  
+    owner_id = fields.String(required=True)
+    location_pt_1 = fields.String()
+    location_pt_2 = fields.String()
+    location_pt_3 = fields.String()
+    location_pt_4 = fields.String()
+    location_pt_5 = fields.String()
     class Meta:
         model = Trail
         load_instance = True
@@ -257,11 +257,11 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
 trail_schema = TrailSchema()
 trails_schema = TrailSchema(many=True)
 class UserSchema(ma.SQLAlchemyAutoSchema):
-    user_id = fields.Str()
-    username = fields.Str()
-    email = fields.Str()
-    password = fields.Str()
-    role = fields.Str()
+    user_id = fields.String()
+    username = fields.String()
+    email = fields.String()
+    password = fields.String()
+    role = fields.String()
     class Meta:
         model = User
         load_instance = True
@@ -271,10 +271,10 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 class LocationPointSchema(ma.SQLAlchemyAutoSchema):
-    location_point_id = fields.Str()
+    location_point_id = fields.String()
     latitude = fields.Float()
     longitude = fields.Float()
-    description = fields.Str()
+    description = fields.String()
     class Meta:
         model = LocationPoint
         load_instance = True
@@ -284,8 +284,8 @@ location_point_schema = LocationPointSchema()
 location_points_schema = LocationPointSchema(many=True)
 
 class AttractionSchema(ma.SQLAlchemyAutoSchema):
-    attraction_id = fields.Str()
-    attraction_name = fields.Str()
+    attraction_id = fields.String()
+    attraction_name = fields.String()
     class Meta:
         model = Attraction
         load_instance = True
@@ -295,8 +295,8 @@ attraction_schema = AttractionSchema()
 attractions_schema = AttractionSchema(many=True)
 
 class TrailAttractionSchema(ma.SQLAlchemyAutoSchema):
-    attraction_id = fields.Str()
-    trail_id = fields.Str()
+    attraction_id = fields.String()
+    trail_id = fields.String()
     class Meta:
         model = TrailAttraction
         load_instance = True
