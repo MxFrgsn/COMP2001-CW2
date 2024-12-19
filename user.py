@@ -1,7 +1,7 @@
 # user.py
 from flask import abort, make_response, request
 from config import db
-from models import users_schema, user_schema, User
+from models import users_schema, user_schema, User, Trail
 import requests
 
 def create():
@@ -54,7 +54,16 @@ def update(user_id):
     
 def delete(user_id): 
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
-    if existing_user:
+    trails = Trail.query.filter(Trail.owner_id == user_id).all()
+
+    if user_id == "USR00001":
+        return make_response(f"User with user ID {user_id} cannot be deleted, it is admin.", 400)
+    elif existing_user:
+        for trail in trails:
+            trail.owner_id = "USR00001"
+            db.session.add(trail)
+        db.session.commit()
+
         db.session.delete(existing_user)
         db.session.commit()
         return make_response(f"User with user ID {user_id} has been deleted", 200)
