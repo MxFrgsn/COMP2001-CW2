@@ -32,31 +32,22 @@ def read_attractions_or_trails(id, type):
 def read_all(): 
     trail_attractions = db.session.query(TrailAttraction).all() 
     return trail_attractions_schema.dump(trail_attractions)
-    
-def delete(): 
-    data = request.get_json()
-    trail_id = data.get('trail_id')
-    attraction_id = data.get('attraction_id')
-    delete_all = data.get('delete_all', False)
 
-    if not delete_all:
-        if not trail_id or not attraction_id:
-            abort(400, "Both 'trail_id' and 'attraction_id' are required")
+def delete_all(trail_id):    
+    existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all()
+    if existing_trail_attractions:
+        for attraction in existing_trail_attractions:
+            db.session.delete(attraction)
+        db.session.commit()
+        return make_response(f"All Attractions tied to trail ID {trail_id} have been deleted", 204)
+    else:
+        abort(404, f"No attractions found linked to trail ID {trail_id}")
 
-    if delete_all:  
-        existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all()
-        if existing_trail_attractions:
-            for attraction in existing_trail_attractions:
-                db.session.delete(attraction)
-            db.session.commit()
-            return make_response(f"All Attractions tied to trail ID {trail_id} have been deleted", 204)
-        else:
-            abort(404, f"No attractions found linked to trail ID {trail_id}")
-    else:  
-        existing_trail_attraction = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id,TrailAttraction.attraction_id == attraction_id).one_or_none()
-        if existing_trail_attraction:
-            db.session.delete(existing_trail_attraction)
-            db.session.commit()
-            return make_response(f"Attraction ID {attraction_id} tied to the trail ID {trail_id} has been deleted", 204)
-        else:
-            abort(404, f"Attraction ID {attraction_id} tied to the trail ID {trail_id} not found")
+def delete(trail_id,attraction_id): 
+    existing_trail_attraction = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id,TrailAttraction.attraction_id == attraction_id).one_or_none()
+    if existing_trail_attraction:
+        db.session.delete(existing_trail_attraction)
+        db.session.commit()
+        return make_response(f"Attraction ID {attraction_id} tied to the trail ID {trail_id} has been deleted", 204)
+    else:
+        abort(404, f"Attraction ID {attraction_id} tied to the trail ID {trail_id} not found")

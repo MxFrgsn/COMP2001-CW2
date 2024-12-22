@@ -61,5 +61,6 @@ if __name__ == '__main__':
 # Your Password is: GjiF140*
 
 # Docker Image: mxfrgsn/comp2001_cw2
+# docker pull mxfrgsn/comp2001_cw2
 # GitHub Repository: https://github.com/MxFrgsn/COMP2001-CW2
 # docker run -p 8000:8000 mxfrgsn/comp2001_cw2

@@ -5,16 +5,10 @@ from models import trail_schema, trails_schema, Trail, TrailAttraction
 
 def create(): 
     trail_data = request.get_json()  
-    trail_id = trail_data.get('trail_id')
-    existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
-
-    if existing_trail is None:
-        new_trail = trail_schema.load(trail_data, session=db.session)
-        db.session.add(new_trail)
-        db.session.commit()
-        return trail_schema.dump(new_trail), 201
-    else:
-        abort(406, f"trail with trail_id {trail_id} already exists")
+    new_trail = trail_schema.load(trail_data, session=db.session)
+    db.session.add(new_trail)
+    db.session.commit()
+    return trail_schema.dump(new_trail), 201
 
 def read_one(trail_id):
     trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()

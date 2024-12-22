@@ -13,17 +13,7 @@ components:
   schemas:
     Trail:
       type: object
-      required:
-        - trail_name
-        - difficulty
-        - length
-        - traffic
-        - owner_id
-        - location
       properties:
-        trail_id:
-          type: integer
-          description: 'Unique identifier for the trail'
         trail_name:
           type: string
           description: 'Name of the trail'
@@ -99,117 +89,9 @@ components:
         location_pt_5:
           type: integer
           description: 'Fifth point of the trail location'
-    Trail_Update:
-      type: object
-      properties:
-        trail_name:
-          type: string
-          description: 'Name of the trail'
-          minLength: 5
-          maxLength: 255
-        difficulty:
-          type: string
-          description: 'Difficulty level of the trail'
-          enum:
-            - easy
-            - moderate
-            - hard
-        length:
-          type: number
-          format: float
-          description: 'Length of the trail in kilometers'
-          minimum: 0.0
-          maximum: 99999.99
-        traffic:
-          type: string
-          description: 'Expected traffic on the trail'
-          enum:
-            - light
-            - moderate
-            - heavy
-        duration:
-          type: string
-          description: 'Approximate duration to complete the trail'
-          pattern: '^\d{2}:\d{2}$'
-        elevation_gain:
-          type: integer
-          description: 'Elevation gain in meters'
-          minimum: 0
-          maximum: 9999
-        route_type:
-          type: string
-          description: 'Type of route, e.g., loop, out-and-back, etc.'
-          enum:
-            - loop
-            - out and back
-            - point to point
-        summary:
-          type: string
-          description: 'Short summary of the trail'
-          minLength: 10
-          maxLength: 255  
-          nullable: true
-        description:
-          type: string
-          description: 'Detailed description of the trail'
-          minLength: 100
-          maxLength: 1500
-          nullable: true
-        location:
-          type: string
-          description: 'Location of the trail'
-          maxLength: 255
-        location_pt_1:
-          type: integer
-          description: 'First point of the trail location'
-        location_pt_2:
-          type: integer
-          description: 'Second point of the trail location'
-        location_pt_3:
-          type: integer
-          description: 'Third point of the trail location'
-        location_pt_4:
-          type: integer
-          description: 'Fourth point of the trail location'
-        location_pt_5:
-          type: integer
-          description: 'Fifth point of the trail location'
-    User_Update:
-      type: object
-      properties:
-        username:
-          type: string
-          description: 'New username of the user'
-          minLength: 3
-          maxLength: 255
-        email:
-          type: string
-          format: email
-          description: ' New email address of the user'
-          maxLength: 255
-        password:
-          type: string
-          description: 'new Password of the user'
-          minLength: 8
-          maxLength: 255
-        role:
-          type: string
-          description: 'new Role of the user'
-          enum:
-            - admin
-            - user
     User:
       type: object
-      required:
-        - user_id
-        - username
-        - email
-        - password
-        - role
       properties:
-        user_id:
-          type: integer
-          description: 'Unique identifier for the user'
         username:
           type: string
           description: 'Username of the user'
@@ -246,12 +128,8 @@ components:
     Attraction:
       type: object
       required:
-        - attraction_id
         - attraction_name
       properties:
-        attraction_id:
-          type: integer
-          description: 'Unique identifier for the attraction'
         attraction_name:
           type: string
           description: 'Name of the attraction'
@@ -259,14 +137,7 @@ components:
           maxLength: 255
     LocationPoint:
       type: object
-      required:
-        - location_point_id
-        - latitude
-        - longitude
       properties:
-        location_point_id:
-          type: integer
-          description: 'Unique identifier for the location point'
         latitude:
           type: number
           format: float
@@ -284,26 +155,6 @@ components:
           description: 'Description of the location point'
           minLength: 3
           maxLength: 255
-    LocationPoint_Update:
-      type: object
-      properties:
-        description:
-            type: string
-            description: 'New description of the location point'
-            minLength: 3
-            maxLength: 255
-        latitude:
-          type: number
-          format: float
-          description: 'New latitude of the location point'
-          minimum: -90.0
-          maximum: 90.0
-        longitude:
-          type: number
-          format: float
-          description: 'New longitude of the location point'
-          minimum: -180.0
-          maximum: 180.0
     User_Authentication:
       type: object
       required:
@@ -426,7 +277,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Trail_Update'
+              $ref: '#/components/schemas/Trail'
       responses:
         '200':
           description: Trail updated successfully
@@ -517,7 +368,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User_Update'
+              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: User updated successfully
@@ -550,66 +401,38 @@ paths:
           description: Trail attraction created successfully
         '400':
           description: Request failed, please retry.
+  /trail_attraction/{trail_id}/{attraction_id}:
     delete:
       operationId: 'trail_attraction.delete'
       tags:
         - 'trail_attraction'
-      summary: 'Delete one or all attractions tied to a trail'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              $ref: '#/components/schemas/TrailAttraction'
-              properties:
-                delete_all:
-                  type: boolean
-                  description: 'Flag to delete all attractions linked to the trail'
-                  example: true
-              required:
-                - trail_id
-                - attraction_id
+      summary: 'Delete one attraction tied to a trail'
+      parameters:
+       - $ref: '#/components/parameters/trail_id'
+       - $ref: '#/components/parameters/attraction_id'
       responses:
         '204':
-          description: 'Attraction(s) successfully deleted'
-        '400':
-          description: 'Bad Request, required fields are missing or invalid'
+          description: 'Attraction successfully deleted' # workking here
         '404':
-          description: 'Not Found, trail or attraction not found'
-  /trail_attraction/{id}:
-    get:
-      operationId: 'trail_attraction.read_attractions_or_trails'
+          description: 'Trail or attraction not found'
+  /trail_attraction/{trail_id}/all:
+    delete:
+      operationId: 'trail_attraction.delete_all'
       tags:
         - 'trail_attraction'
-      summary: Retrieve all attractions tied to a trail or all trails tied to an attraction
+      summary: 'Delete all attractions tied to a trail'
       parameters:
-        - name: 'id'
-          in: 'path'
-          description: 'The ID of either the trail or attraction, depending on the request type'
+        - name: trail_id
+          in: path
+          description: 'ID of the trail'
           required: true
           schema:
             type: integer
-        - name: 'type'
-          in: 'query'
-          description: 'Specify whether to fetch attractions tied to a trail or trails tied to an attraction.'
-          required: true
-          schema:
-            type: string
-            enum:
-              - trail
-              - attraction
       responses:
-        '200':
-          description: Successfully retrieved data
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TrailAttraction'
-        '400':
-          description: Request failed, please retry.
+        '204':
+          description: 'All attractions successfully deleted'
+        '404':
+          description: 'Trail not found'
   /attractions:
     get:
       operationId: 'attraction.read_all'
@@ -748,7 +571,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LocationPoint_Update'
+              $ref: '#/components/schemas/LocationPoint'
       responses:
         '200':
           description: Location point updated successfully

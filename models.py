@@ -165,7 +165,7 @@ class LocationPoint(db.Model):
 class Attraction(db.Model):
     __tablename__ = 'Attraction'
     __table_args__ = {'schema': 'CW2'}
-    attraction_id = db.Column(db.Intege, primary_key=True)
+    attraction_id = db.Column(db.Integer, primary_key=True)
     attraction_name = db.Column(db.String(255), nullable=False)
 
     @validates('Attraction')
@@ -184,23 +184,23 @@ class TrailAttraction(db.Model):
     Trail = db.relationship('Trail', backref= 'trail_attractions')
 
 class TrailSchema(ma.SQLAlchemyAutoSchema):
-    trail_id = fields.Integer(required=True)
-    trail_name = fields.String(required=True)
-    summary = fields.String(load_default=None)
-    description = fields.String(load_default=None)
-    location = fields.String(required=True)
-    difficulty = fields.String(required=True)
-    length = fields.Float(required=True)
-    traffic = fields.String(required=True)
-    duration = fields.String(load_default=None)
-    elevation_gain = fields.Integer(missing=None)  
-    route_type = fields.String(load_default=None)  
-    owner_id = fields.String(required=True)
-    location_pt_1 = fields.String()
-    location_pt_2 = fields.String()
-    location_pt_3 = fields.String()
-    location_pt_4 = fields.String()
-    location_pt_5 = fields.String()
+    trail_id = fields.Integer()
+    trail_name = fields.String()
+    summary = fields.String()
+    description = fields.String()
+    location = fields.String()
+    difficulty = fields.String()
+    length = fields.Float()
+    traffic = fields.String()
+    duration = fields.String()
+    elevation_gain = fields.Integer()  
+    route_type = fields.String()  
+    owner_id = fields.Integer()
+    location_pt_1 = fields.Integer()
+    location_pt_2 = fields.Integer()
+    location_pt_3 = fields.Integer()
+    location_pt_4 = fields.Integer()
+    location_pt_5 = fields.Integer()
     class Meta:
         model = Trail
         load_instance = True
@@ -248,7 +248,7 @@ attractions_schema = AttractionSchema(many=True)
 
 class TrailAttractionSchema(ma.SQLAlchemyAutoSchema):
     attraction_id = fields.Integer()
-    trail_id = fields.String()
+    trail_id = fields.Integer()
     class Meta:
         model = TrailAttraction
         load_instance = True

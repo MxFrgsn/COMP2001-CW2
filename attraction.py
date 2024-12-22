@@ -42,7 +42,7 @@ def read_one(attraction_id):
         abort(404, f"Attraction with attraction ID {attraction_id} not found")
 
 def update(attraction_id):
-    attraction_data = attraction_data.get('attraction_id')
+    attraction_data = request.get_json()  
     existing_attraction = Attraction.query.filter(Attraction.attraction_id == attraction_id).one_or_none()
     if existing_attraction:
         if 'attraction_name' in attraction_data:

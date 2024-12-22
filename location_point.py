@@ -35,7 +35,6 @@ def update(location_point_id):
     existing_location_point = LocationPoint.query.filter(LocationPoint.location_point_id == location_point_id).one_or_none()
     
     if existing_location_point:
-        # Update only the fields that were included in the request body
         if 'description' in location_point_data:
             existing_location_point.description = location_point_data['description']
         if 'latitude' in location_point_data:
