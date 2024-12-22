@@ -5,8 +5,8 @@ import re
 class Trail(db.Model):
     __tablename__ = 'Trail'
     __table_args__ = {'schema': 'CW2'}
-    trail_id = db.Column(db.String(8), primary_key=True) 
-    owner_id = db.Column(db.String(8), db.ForeignKey('CW2.User.user_id'), nullable=False)  
+    trail_id = db.Column(db.Integer, primary_key=True) 
+    owner_id = db.Column(db.Integer, db.ForeignKey('CW2.User.user_id'), nullable=False)  
     trail_name = db.Column(db.String(255), nullable=False, unique=True) 
     summary = db.Column(db.String(255))
     description = db.Column(db.String(1500))
@@ -19,11 +19,11 @@ class Trail(db.Model):
     route_type = db.Column(db.String(14), nullable=False)
 
     LOCATION_POINT = 'CW2.Location_Point.location_point_id'
-    location_pt_1 = db.Column(db.String(8), db.ForeignKey(LOCATION_POINT))
-    location_pt_2 = db.Column(db.String(8), db.ForeignKey(LOCATION_POINT))
-    location_pt_3 = db.Column(db.String(8), db.ForeignKey(LOCATION_POINT))
-    location_pt_4 = db.Column(db.String(8), db.ForeignKey(LOCATION_POINT))
-    location_pt_5 = db.Column(db.String(8), db.ForeignKey(LOCATION_POINT))
+    location_pt_1 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_2 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_3 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_4 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    location_pt_5 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
 
     owner = db.relationship("User", backref="trails")
     location_point_1 = db.relationship("LocationPoint", foreign_keys=[location_pt_1])
@@ -31,18 +31,6 @@ class Trail(db.Model):
     location_point_3 = db.relationship("LocationPoint", foreign_keys=[location_pt_3])
     location_point_4 = db.relationship("LocationPoint", foreign_keys=[location_pt_4])
     location_point_5 = db.relationship("LocationPoint", foreign_keys=[location_pt_5])
-    
-    @validates('trail_id') 
-    def validate_trail_id(self, value):
-        acronym = value[0:3]
-        numbers = value[3:8]
-        if len(value) != 8:
-            raise ValidationError('Trail ID must be 8 characters long')
-        if acronym!= 'TRL':
-            raise ValidationError('Trail ID must start with TRL')
-        if numbers.isdigit() == False:
-            raise ValidationError('Trail ID must end with 5 numbers')
-        return value
     
     @validates('trail_name')
     def validate_trail_name(self, value):
@@ -112,23 +100,11 @@ class Trail(db.Model):
 class User(db.Model):
     __tablename__ = 'User'
     __table_args__ = {'schema': 'CW2'}
-    user_id = db.Column(db.String(8), primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False) 
     email = db.Column(db.String(255), nullable=False) 
     password = db.Column(db.String(255), nullable=False)    
     role = db.Column(db.String(8), nullable=False)
-    
-    @validates('user_id')
-    def validate_user_id(self, value):
-        acronym = value[0:3]
-        numbers = value[3:8]
-        if len(value) != 8:
-            raise ValidationError('User ID must be 8 characters long')
-        if acronym!= 'USR':
-            raise ValidationError('User ID must start with USR')
-        if numbers.isdigit() == False:
-            raise ValidationError('User ID must end with 5 numbers')
-        return value
     
     @validates('username')
     def validate_username(self, value):
@@ -161,22 +137,10 @@ class User(db.Model):
 class LocationPoint(db.Model):
     __tablename__ = 'Location_Point'
     __table_args__ = {'schema': 'CW2'}
-    location_point_id = db.Column(db.String(8), nullable=False, primary_key=True)
+    location_point_id = db.Column(db.Integer, nullable=False, primary_key=True)
     latitude = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
     longitude = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
     description = db.Column(db.String(255))
-
-    @validates('location_point_id')
-    def validate_location_point_id(self, value):
-        acronym = value[0:3]
-        numbers = value[3:8]
-        if len(value) != 8:
-            raise ValidationError('Location Point ID must be 8 characters long')
-        if acronym!= 'LPT':
-            raise ValidationError('Location Point ID must start with LPT')
-        if numbers.isdigit() == False:
-            raise ValidationError('Location Point ID must end with 5 numbers')
-        return value
     
     @validates('latitude')
     def validate_latitude(self, value):
@@ -201,21 +165,9 @@ class LocationPoint(db.Model):
 class Attraction(db.Model):
     __tablename__ = 'Attraction'
     __table_args__ = {'schema': 'CW2'}
-    attraction_id = db.Column(db.String(8), primary_key=True)
+    attraction_id = db.Column(db.Intege, primary_key=True)
     attraction_name = db.Column(db.String(255), nullable=False)
 
-    @validates('attraction_id')
-    def validate_attraction_id(self, value):
-        acronym = value[0:3]
-        numbers = value[3:8]
-        if len(value) != 8:
-            raise ValidationError('Attraction ID must be 8 characters long')
-        if acronym!= 'ATT':
-            raise ValidationError('Attraction ID must start with FET')
-        if numbers.isdigit() == False:
-            raise ValidationError('Attraction ID must end with 5 numbers')
-        return value
-    
     @validates('Attraction')
     def validate_Attraction(self, value):
         if len(value) < 3:
@@ -225,14 +177,14 @@ class Attraction(db.Model):
 class TrailAttraction(db.Model):
     __tablename__ = 'Trail_Attraction'
     __table_args__ = ({'schema': 'CW2'})
-    attraction_id = db.Column(db.String(8), db.ForeignKey('CW2.Attraction.attraction_id'), nullable=False,primary_key=True)
-    trail_id = db.Column(db.String(8), db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
+    attraction_id = db.Column(db.Integer, db.ForeignKey('CW2.Attraction.attraction_id'), nullable=False,primary_key=True)
+    trail_id = db.Column(db.Integer, db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
 
     Attraction = db.relationship('Attraction', backref='trail_attractions')
     Trail = db.relationship('Trail', backref= 'trail_attractions')
 
 class TrailSchema(ma.SQLAlchemyAutoSchema):
-    trail_id = fields.String(required=True)
+    trail_id = fields.Integer(required=True)
     trail_name = fields.String(required=True)
     summary = fields.String(load_default=None)
     description = fields.String(load_default=None)
@@ -257,7 +209,7 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
 trail_schema = TrailSchema()
 trails_schema = TrailSchema(many=True)
 class UserSchema(ma.SQLAlchemyAutoSchema):
-    user_id = fields.String()
+    user_id = fields.Integer()
     username = fields.String()
     email = fields.String()
     password = fields.String()
@@ -271,7 +223,7 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 class LocationPointSchema(ma.SQLAlchemyAutoSchema):
-    location_point_id = fields.String()
+    location_point_id = fields.Integer()
     latitude = fields.Float()
     longitude = fields.Float()
     description = fields.String()
@@ -284,7 +236,7 @@ location_point_schema = LocationPointSchema()
 location_points_schema = LocationPointSchema(many=True)
 
 class AttractionSchema(ma.SQLAlchemyAutoSchema):
-    attraction_id = fields.String()
+    attraction_id = fields.Integer()
     attraction_name = fields.String()
     class Meta:
         model = Attraction
@@ -295,7 +247,7 @@ attraction_schema = AttractionSchema()
 attractions_schema = AttractionSchema(many=True)
 
 class TrailAttractionSchema(ma.SQLAlchemyAutoSchema):
-    attraction_id = fields.String()
+    attraction_id = fields.Integer()
     trail_id = fields.String()
     class Meta:
         model = TrailAttraction

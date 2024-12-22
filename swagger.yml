@@ -8,8 +8,7 @@ info:
 servers:
  - url: '/api' 
  #- url: 'http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson/'
-
-
+  
 components:
   schemas:
     Trail:
@@ -23,10 +22,8 @@ components:
         - location
       properties:
         trail_id:
-          type: string
+          type: integer
           description: 'Unique identifier for the trail'
-          maxLength: 8
-          pattern: '^TRL\d{5}$'
         trail_name:
           type: string
           description: 'Name of the trail'
@@ -81,39 +78,27 @@ components:
           maxLength: 1500
           nullable: true
         owner_id:
-          type: string
+          type: integer
           description: 'Unique identifier of the trail owner'
-          maxLength: 8
-          pattern: '^USR\d{5}$'
         location:
           type: string
           description: 'Location of the trail'
           maxLength: 255
         location_pt_1:
-          type: string
+          type: integer
           description: 'First point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         location_pt_2:
-          type: string
+          type: integer
           description: 'Second point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         location_pt_3:
-          type: string
+          type: integer
           description: 'Third point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         location_pt_4:
-          type: string
+          type: integer
           description: 'Fourth point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         location_pt_5:
-          type: string
+          type: integer
           description: 'Fifth point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
     Trail_Update:
       type: object
       properties:
@@ -175,30 +160,20 @@ components:
           description: 'Location of the trail'
           maxLength: 255
         location_pt_1:
-          type: string
+          type: integer
           description: 'First point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         location_pt_2:
-          type: string
+          type: integer
           description: 'Second point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         location_pt_3:
-          type: string
+          type: integer
           description: 'Third point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         location_pt_4:
-          type: string
+          type: integer
           description: 'Fourth point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         location_pt_5:
-          type: string
+          type: integer
           description: 'Fifth point of the trail location'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
     User_Update:
       type: object
       properties:
@@ -233,10 +208,8 @@ components:
         - role
       properties:
         user_id:
-          type: string
+          type: integer
           description: 'Unique identifier for the user'
-          maxLength: 8
-          pattern: '^USR\d{5}$'
         username:
           type: string
           description: 'Username of the user'
@@ -265,15 +238,11 @@ components:
         - attraction_id
       properties:
         trail_id:
-          type: string
+          type: integer
           description: 'Unique identifier of the trail'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         attraction_id:
-          type: string
+          type: integer
           description: 'Unique identifier of the attraction'
-          maxLength: 8
-          pattern: '^ATT\d{5}$'
     Attraction:
       type: object
       required:
@@ -281,10 +250,8 @@ components:
         - attraction_name
       properties:
         attraction_id:
-          type: string
+          type: integer
           description: 'Unique identifier for the attraction'
-          maxLength: 8
-          pattern: '^ATT\d{5}$'
         attraction_name:
           type: string
           description: 'Name of the attraction'
@@ -298,10 +265,8 @@ components:
         - longitude
       properties:
         location_point_id:
-          type: string
+          type: integer
           description: 'Unique identifier for the location point'
-          maxLength: 8
-          pattern: '^LPT\d{5}$'
         latitude:
           type: number
           format: float
@@ -361,28 +326,28 @@ components:
       description: 'Unique identifier of the trail to search for'
       required: true
       schema:
-        type: string
+        type: integer
     user_id:
       name: 'user_id'
       in: 'path'
       description: 'Unique identifier of the user to search for'
       required: true
       schema:
-        type: string
+        type: integer
     attraction_id:
       name: 'attraction_id'
       in: 'path'
       description: 'Unique identifier of the attraction to search for'
       required: true
       schema:
-        type: string
+        type: integer
     location_point_id:
       name: 'location_point_id'
       in: 'path'
       description: 'Unique identifier of the location point to search for'
       required: true
       schema:
-        type: string
+        type: integer
     name:
       name: 'name'
       in: 'query'
@@ -624,7 +589,7 @@ paths:
           description: 'The ID of either the trail or attraction, depending on the request type'
           required: true
           schema:
-            type: string
+            type: integer
         - name: 'type'
           in: 'query'
           description: 'Specify whether to fetch attractions tied to a trail or trails tied to an attraction.'
