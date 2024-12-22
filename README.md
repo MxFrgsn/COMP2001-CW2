@@ -19,10 +19,18 @@ The **Trail Microservice** is a well-being-focused outdoor trail application des
 ### **Alternative Python Installation**:
 1. Clone/download the GitHub folder containing the application.
 2. Install Python:
-   - [Download Python](https://www.python.org/downloads/) and install it.
+   - [Download Python](https://www.python.org/downloads/) and follow the installation instructions.
 3. Set up a Python environment using your preferred IDE (e.g., Python IDE, Visual Studio Code).
 4. Navigate to the folder where the `app.py` file is located.
-5. Run `app.py` using your Python environment.
+5. Install required packages from `requirements.txt`:
+   ```bash
+   pip install -r requirements.txt
+6. Run `app.py` using your Python environment.
+
+## Swagger Documentation:
+
+You can access the Swagger UI and use the API endpoints yourself at:
+http://localhost:8000/api/ui
 
 ## Usage Instructions:
 
@@ -138,11 +146,6 @@ Endpoints:
 - **Path**: /location_point/{location_point_id}  
   **Description**: Delete a location point by ID.  
   **Method**: `DELETE`  
-
-## Swagger Documentation:
-
-You can access the Swagger UI and use the API endpoints yourself at:
-http://localhost:8000/api/ui
 
 ## User Authentication:
 
