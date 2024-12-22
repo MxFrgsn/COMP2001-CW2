@@ -6,8 +6,8 @@ info:
   version: '1.0.1'
 
 servers:
- - url: '/api' 
- #- url: 'http://cent-5-534.uopnet.plymouth.ac.uk/COMP2001/MFerguson/'
+ - url: '/api' # base path for all endpoints
+   description: 'Local server'
   
 components:
   schemas:
