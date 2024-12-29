@@ -74,21 +74,6 @@ components:
           type: string
           description: 'Location of the trail'
           maxLength: 255
-        location_pt_1:
-          type: integer
-          description: 'First point of the trail location'
-        location_pt_2:
-          type: integer
-          description: 'Second point of the trail location'
-        location_pt_3:
-          type: integer
-          description: 'Third point of the trail location'
-        location_pt_4:
-          type: integer
-          description: 'Fourth point of the trail location'
-        location_pt_5:
-          type: integer
-          description: 'Fifth point of the trail location'
     User:
       type: object
       properties:

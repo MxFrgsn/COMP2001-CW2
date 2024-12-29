@@ -1,22 +1,21 @@
 # trail.py
-from flask import abort, make_response, request
+from flask import abort, make_response, request, session
 from config import db
-from models import trail_schema, trails_schema, Trail, TrailAttraction 
+from models import trail_schema, trails_schema, Trail, limited_trails_schema, limited_trail_schema
 
 def create(): 
     trail_data = request.get_json()  
     new_trail = trail_schema.load(trail_data, session=db.session)
     db.session.add(new_trail)
     db.session.commit()
-    return trail_schema.dump(new_trail), 201
+    return trail_schema.dump(new_trail)
 
 def read_one(trail_id):
     trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
     if trail is not None:
-        trail_data = trail_schema.dump(trail)
-        attractions = [attraction.attraction_name for attraction in trail.attractions]
-        trail_data['attractions'] = attractions
-        return trail_data
+        if session.get('role') == 'admin':
+            return trail_schema.dump(trail)
+        return limited_trail_schema.dump(trail)
     else:
         abort(404, f"Trail with trail_id {trail_id} not found")
 
@@ -25,11 +24,16 @@ def read_all(name=None):
     if name:
         query = query.filter(Trail.trail_name.ilike(f"%{name}%"))
     trails = query.all()
-    return trails_schema.dump(trails)
+    if session.get('role') == 'admin':
+        return trails_schema.dump(trails)
+    return limited_trails_schema.dump(trails)
 
 def update(trail_id):
     trail_data = request.get_json()  
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
+    print(session.get('role'))
+    if session.get('role') != 'admin' and session.get('user_id') != existing_trail.owner_id:
+        return make_response(f"Trail {trail_id} cannot be updated, currently authenicated user {session.get('user_id')} is not the owner of the trail.", 400)
     
     if existing_trail:
         # Update only the fields that were included in the request body
@@ -61,12 +65,9 @@ def update(trail_id):
 
 def delete(trail_id): 
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
-    # Deleting all attractions associated with the trail, as trail id is a foreign key in the trail attraction table
-    existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all() 
-
+    if session.get('user_id') != existing_trail.owner_id and session.get('role') != 'admin':
+        return make_response(f"Trail {trail_id} cannot be deleted, currently authenicated user {session.get('user_id')} is not the owner of the trail.", 400)
     if existing_trail:
-        for attraction in existing_trail_attractions:
-            db.session.delete(attraction)
         db.session.delete(existing_trail)
         db.session.commit()
         return make_response(f"trail with ID {trail_id} has been deleted", 200)
