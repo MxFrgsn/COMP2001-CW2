@@ -2,6 +2,62 @@
 from marshmallow import fields, validates, ValidationError
 from config import db, ma
 import re
+class User(db.Model):
+    __tablename__ = 'User'
+    __table_args__ = {'schema': 'CW2'}
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), nullable=False) 
+    email = db.Column(db.String(255), nullable=False) 
+    password = db.Column(db.String(255), nullable=False)    
+    role = db.Column(db.String(8), nullable=False)
+
+    trail_owner = db.relationship("Trail", back_populates="owner", cascade="all, delete, delete-orphan")
+
+    @validates('username')
+    def validate_username(self, value):
+        if len(value) < 3:
+            raise ValidationError('Username must be at least 3 characters')
+        return value
+    
+    @validates('email')
+    def validate_email(self, value):
+        if not re.match(r'^[^@]+@[^@]+\.[^@]{2,}$', value):
+            raise ValidationError('Invalid email address')
+        if len(value) < 3:
+            raise ValidationError('Email must be at least 3 characters')
+        return value
+    
+    @validates('password')
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise ValidationError('Password must be at least 8 characters')
+        if ' ' in value:
+            raise ValidationError('Password must not contain spaces.')
+        return value
+    
+    @validates('role')
+    def validate_role(self, value):
+        if value not in ['admin', 'user']:
+            raise ValidationError('Invalid role')
+        return value
+class TrailLocationPoint(db.Model):
+    __tablename__ = 'Trail_LocationPoint'
+    __table_args__ = ({'schema': 'CW2'})
+    trail_id = db.Column(db.Integer, db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
+    location_point_id = db.Column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False, primary_key=True)
+    
+    linked_trail_points = db.relationship("Trail", back_populates="trail_location_points")
+    linked_location_points = db.relationship("LocationPoint", back_populates="location_points")
+    
+class TrailAttraction(db.Model):
+    __tablename__ = 'Trail_Attraction'
+    __table_args__ = ({'schema': 'CW2'})
+    attraction_id = db.Column(db.Integer, db.ForeignKey('CW2.Attraction.attraction_id'), nullable=False,primary_key=True)
+    trail_id = db.Column(db.Integer, db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
+
+    trails_attractions_linked = db.relationship("Trail", back_populates="linked_attractions")
+    attractions = db.relationship("Attraction", back_populates="attractions_linked")
+
 class Trail(db.Model):
     __tablename__ = 'Trail'
     __table_args__ = {'schema': 'CW2'}
@@ -18,20 +74,10 @@ class Trail(db.Model):
     elevation_gain = db.Column(db.Integer, nullable=False)
     route_type = db.Column(db.String(14), nullable=False)
 
-    LOCATION_POINT = 'CW2.Location_Point.location_point_id'
-    location_pt_1 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
-    location_pt_2 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
-    location_pt_3 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
-    location_pt_4 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
-    location_pt_5 = db.Column(db.Integer, db.ForeignKey(LOCATION_POINT))
+    owner = db.relationship("User", back_populates ="trail_owner") 
+    linked_attractions = db.relationship("TrailAttraction", back_populates="trails_attractions_linked", cascade="all, delete, delete-orphan")
+    trail_location_points = db.relationship("TrailLocationPoint", back_populates ="linked_trail_points", cascade="all, delete, delete-orphan")
 
-    owner = db.relationship("User", backref="trails")
-    location_point_1 = db.relationship("LocationPoint", foreign_keys=[location_pt_1])
-    location_point_2 = db.relationship("LocationPoint", foreign_keys=[location_pt_2])
-    location_point_3 = db.relationship("LocationPoint", foreign_keys=[location_pt_3])
-    location_point_4 = db.relationship("LocationPoint", foreign_keys=[location_pt_4])
-    location_point_5 = db.relationship("LocationPoint", foreign_keys=[location_pt_5])
-    
     @validates('trail_name')
     def validate_trail_name(self, value):
         if len(value) < 5:
@@ -96,43 +142,6 @@ class Trail(db.Model):
         if value not in ['loop', 'out and back', 'point to point']:
             raise ValidationError('Invalid route type')
         return value
-    
-class User(db.Model):
-    __tablename__ = 'User'
-    __table_args__ = {'schema': 'CW2'}
-    user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), nullable=False) 
-    email = db.Column(db.String(255), nullable=False) 
-    password = db.Column(db.String(255), nullable=False)    
-    role = db.Column(db.String(8), nullable=False)
-    
-    @validates('username')
-    def validate_username(self, value):
-        if len(value) < 3:
-            raise ValidationError('Username must be at least 3 characters')
-        return value
-    
-    @validates('email')
-    def validate_email(self, value):
-        if not re.match(r'^[^@]+@[^@]+\.[^@]{2,}$', value):
-            raise ValidationError('Invalid email address')
-        if len(value) < 3:
-            raise ValidationError('Email must be at least 3 characters')
-        return value
-    
-    @validates('password')
-    def validate_password(self, value):
-        if len(value) < 8:
-            raise ValidationError('Password must be at least 8 characters')
-        if ' ' in value:
-            raise ValidationError('Password must not contain spaces.')
-        return value
-    
-    @validates('role')
-    def validate_role(self, value):
-        if value not in ['admin', 'user']:
-            raise ValidationError('Invalid role')
-        return value
 
 class LocationPoint(db.Model):
     __tablename__ = 'Location_Point'
@@ -141,6 +150,8 @@ class LocationPoint(db.Model):
     latitude = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
     longitude = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
     description = db.Column(db.String(255))
+
+    location_points = db.relationship("TrailLocationPoint", back_populates="linked_location_points", cascade="all, delete, delete-orphan")
     
     @validates('latitude')
     def validate_latitude(self, value):
@@ -168,21 +179,13 @@ class Attraction(db.Model):
     attraction_id = db.Column(db.Integer, primary_key=True)
     attraction_name = db.Column(db.String(255), nullable=False)
 
+    attractions_linked = db.relationship("TrailAttraction", back_populates="attractions", cascade="all, delete, delete-orphan")
+
     @validates('Attraction')
     def validate_Attraction(self, value):
         if len(value) < 3:
             raise ValidationError('Attraction must be at least 3 characters')
         return value
-    
-class TrailAttraction(db.Model):
-    __tablename__ = 'Trail_Attraction'
-    __table_args__ = ({'schema': 'CW2'})
-    attraction_id = db.Column(db.Integer, db.ForeignKey('CW2.Attraction.attraction_id'), nullable=False,primary_key=True)
-    trail_id = db.Column(db.Integer, db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
-
-    Attraction = db.relationship('Attraction', backref='trail_attractions')
-    Trail = db.relationship('Trail', backref='trail_attractions')
-
 class TrailSchema(ma.SQLAlchemyAutoSchema):
     trail_id = fields.Integer()
     trail_name = fields.String()
@@ -195,19 +198,36 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
     duration = fields.String()
     elevation_gain = fields.Integer()  
     route_type = fields.String()  
-    owner_id = fields.Integer()
-    location_pt_1 = fields.Integer()
-    location_pt_2 = fields.Integer()
-    location_pt_3 = fields.Integer()
-    location_pt_4 = fields.Integer()
-    location_pt_5 = fields.Integer()
+
+    owner = fields.Nested('UserSchema')
+    trail_location_points = fields.List(fields.Nested('LocationPointSchema'))  
+    attractions = fields.List(fields.Nested('AttractionSchema'))
     class Meta:
         model = Trail
         load_instance = True
         sqla_session = db.session
 
-trail_schema = TrailSchema()
-trails_schema = TrailSchema(many=True)
+class LimitedTrailSchema(ma.SQLAlchemyAutoSchema):
+    trail_name = fields.String()
+    summary = fields.String()
+    description = fields.String()
+    location = fields.String()
+    difficulty = fields.String()
+    length = fields.Float()
+    traffic = fields.String()
+    duration = fields.String()
+    elevation_gain = fields.Integer()  
+    route_type = fields.String()  
+
+    owner = fields.Nested('UserSchema')
+    trail_location_points = fields.List(fields.Nested('LocationPointSchema'))  
+    attractions = fields.List(fields.Nested('AttractionSchema'))
+    class Meta:
+        model = Trail
+        load_instance = True
+        sqla_session = db.session
+        exclude = ['owner.user_id', 'owner.email', 'owner.password', 'attractions.attraction_id']
+
 class UserSchema(ma.SQLAlchemyAutoSchema):
     user_id = fields.Integer()
     username = fields.String()
@@ -219,9 +239,6 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
 
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
-
 class LocationPointSchema(ma.SQLAlchemyAutoSchema):
     location_point_id = fields.Integer()
     latitude = fields.Float()
@@ -231,10 +248,6 @@ class LocationPointSchema(ma.SQLAlchemyAutoSchema):
         model = LocationPoint
         load_instance = True
         sqla_session = db.session
-
-location_point_schema = LocationPointSchema()
-location_points_schema = LocationPointSchema(many=True)
-
 class AttractionSchema(ma.SQLAlchemyAutoSchema):
     attraction_id = fields.Integer()
     attraction_name = fields.String()
@@ -242,9 +255,6 @@ class AttractionSchema(ma.SQLAlchemyAutoSchema):
         model = Attraction
         load_instance = True
         sqla_session = db.session
-
-attraction_schema = AttractionSchema()
-attractions_schema = AttractionSchema(many=True)
 
 class TrailAttractionSchema(ma.SQLAlchemyAutoSchema):
     attraction_id = fields.Integer()
@@ -254,5 +264,38 @@ class TrailAttractionSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
 
+class TrailLocationPointSchema(ma.SQLAlchemyAutoSchema):
+    trail_id = fields.Integer()
+    location_point_id = fields.Integer()
+    class Meta:
+        model = TrailLocationPoint
+        load_instance = True
+        sqla_session = db.session
+class TrailAndAttractionSchema(ma.SQLAlchemyAutoSchema):
+    trail = fields.Nested('TrailSchema')
+    attraction = fields.Nested('AttractionSchema')
+
+trail_schema = TrailSchema()
+trails_schema = TrailSchema(many=True)
+
+limited_trail_schema = LimitedTrailSchema()
+limited_trails_schema = LimitedTrailSchema(many=True)
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+
+location_point_schema = LocationPointSchema()
+location_points_schema = LocationPointSchema(many=True)
+
+attraction_schema = AttractionSchema()
+attractions_schema = AttractionSchema(many=True)
+
 trail_attraction_schema = TrailAttractionSchema()
 trail_attractions_schema = TrailAttractionSchema(many=True)
+
+trail_location_point_schema = TrailLocationPointSchema()
+trail_location_points_schema = TrailLocationPointSchema(many=True)
+
+trail_and_attraction_schema = TrailAndAttractionSchema()
+
+
