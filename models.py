@@ -284,6 +284,6 @@ attractions_schema = AttractionSchema(many=True)
 trail_attraction_schema = TrailAttractionSchema()
 trail_attractions_schema = TrailAttractionSchema(many=True)
 
-trail_location_pt_schema = TrailLocationPtSchema()
-trail_location_pts_schema = TrailLocationPtSchema(many=True)
+trail_locationpt_schema = TrailLocationPtSchema()
+trail_locationpts_schema = TrailLocationPtSchema(many=True)
 

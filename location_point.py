@@ -1,5 +1,5 @@
 # location_point.py
-from flask import abort, make_response, request
+from flask import abort, make_response, request, session
 from config import db
 from models import location_point_schema, location_points_schema, LocationPoint
 
@@ -31,6 +31,8 @@ def read_all(name=None):
     return location_points_schema.dump(location_points)
 
 def update(location_point_id):
+    if session.get('role') != 'admin':
+        return make_response(f"Location Point cannot be updated, currently authenicated user {session.get('user_id')} is not an admin.", 400)
     location_point_data = request.get_json()  
     existing_location_point = LocationPoint.query.filter(LocationPoint.location_point_id == location_point_id).one_or_none()
     
@@ -47,6 +49,8 @@ def update(location_point_id):
         abort(404, f"Location Point with ID {location_point_id} not found")
 
 def delete(location_point_id):
+    if session.get('role') != 'admin':
+        return make_response(f"Location Point cannot be deleted, currently authenicated user {session.get('user_id')} is not an admin.", 400)
     existing_location_point = LocationPoint.query.filter(LocationPoint.location_point_id == location_point_id).one_or_none()
     if existing_location_point:
         db.session.delete(existing_location_point)

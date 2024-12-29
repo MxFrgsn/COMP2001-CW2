@@ -56,17 +56,17 @@ def update(user_id):
         abort(404, f"User with ID {user_id} not found")
     
 def delete(user_id): 
+    if session.get('role') != 'admin' and session.get('user_id') != user_id:
+        return make_response(f"User with user ID {user_id} cannot be deleted, currently authenicated user {session.get('user_id')} is not an admin.", 400)
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
     trails = Trail.query.filter(Trail.owner_id == user_id).all()
-    if not session.get('user_id'):
-        return make_response(f"User with user ID {user_id} cannot be deleted, no user is currently logged in.", 400)
-    elif session['role'] != 'admin':
-        return make_response(f"User with user ID {user_id} cannot be deleted, user is not an admin.", 400)
-    elif session['user_id'] == user_id:
-        return make_response(f"User with user ID {user_id} cannot be deleted, it is currently logged in.", 400)
-    if user_id == 1:
-        return make_response(f"User with user ID {user_id} cannot be deleted, it is admin.", 400)
-    elif existing_user:
+
+    if session['role'] != 'admin':
+        return make_response(f"User with user ID {session['user_id']} cannot be deleted, only admins are allowed to delete users.", 400)
+    elif not session.get('user_id') or session['user_id'] != user_id:
+        return make_response(f"User with user ID {user_id} cannot be deleted, no user is currently logged in or the user is trying to delete someone else.", 400)
+    
+    if existing_user:
         for trail in trails:
             trail.owner_id = 1
             db.session.add(trail)

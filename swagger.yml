@@ -140,6 +140,15 @@ components:
           description: 'Description of the location point'
           minLength: 3
           maxLength: 255
+    Trail_locationpt:
+      type: object
+      properties:
+        trail_id:
+          type: integer
+          description: 'Unique identifier of the trail'
+        location_point_id:
+          type: integer
+          description: 'Unique identifier of the location point'
     User_Authentication:
       type: object
       required:
@@ -397,7 +406,7 @@ paths:
        - $ref: '#/components/parameters/attraction_id'
       responses:
         '204':
-          description: 'Attraction successfully deleted' # workking here
+          description: 'Attraction successfully deleted'
         '404':
           description: 'Trail or attraction not found'
   /trail_attraction/{trail_id}/all:
@@ -418,6 +427,33 @@ paths:
           description: 'All attractions successfully deleted'
         '404':
           description: 'Trail not found'
+  /trail_attraction/{id}:
+    get:
+      operationId: 'trail_attraction.read_attractions_or_trails'
+      tags:
+        - 'trail_attraction'
+      summary: 'Get all attractions or trails tied to a trail or attraction'
+      parameters:
+        - name: id
+          in: path
+          description: 'ID of the trail or attraction'
+          required: true
+          schema:
+            type: integer
+        - name: type
+          in: query
+          description: 'Type of the entity to search for'
+          required: true
+          schema:
+            type: string
+            enum:
+              - trail
+              - attraction
+      responses:
+        '200':
+          description: 'Successfully retrieved list of trails or attractions'
+        '400':
+          description: 'Request failed, please retry.'
   /attractions:
     get:
       operationId: 'attraction.read_all'
@@ -562,5 +598,90 @@ paths:
           description: Location point updated successfully
         '404':
           description: Location point not found
-
+  /trail_locationpt:
+    get:
+      operationId: 'trail_locationpt.read_all'
+      tags:
+        - 'trail_locationpt'
+      summary: Get a list of trail location points
+      responses:
+        '200':
+          description: Successfully retrieved list of trail location points
+        '400':
+          description: Request failed, please retry.
+    post:
+      operationId: 'trail_locationpt.create'
+      tags:
+        - 'trail_locationpt'
+      summary: Create a new trail location point
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trail_locationpt'
+      responses:
+        '201':
+          description: Trail location point created successfully
+        '400':
+          description: Request failed, please retry.
+  /trail_locationpt/{trail_id}/{location_point_id}:
+    delete:
+      operationId: 'trail_locationpt.delete'
+      tags:
+        - 'trail_locationpt'
+      summary: 'Delete one location point tied to a trail'
+      parameters:
+        - $ref: '#/components/parameters/trail_id'
+        - $ref: '#/components/parameters/location_point_id'
+      responses:
+        '204':
+          description: 'Location point successfully deleted'
+        '404':
+          description: 'Trail or location point not found'
+  /trail_locationpt/{trail_id}/all:
+    delete:
+      operationId: 'trail_locationpt.delete_all_tied_to_trail'
+      tags:
+        - 'trail_locationpt'
+      summary: 'Delete all location points tied to a trail'
+      parameters:
+        - name: trail_id
+          in: path
+          description: 'ID of the trail'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'All location points successfully deleted'
+        '404':
+          description: 'Trail not found'
+  /trail_locationpt/{id}:
+    get:
+      operationId: 'trail_locationpt.read_locationpts_or_trails'
+      tags:
+        - 'trail_locationpt'
+      summary: 'Get all location points or trails tied to a trail or location point'
+      parameters:
+        - name: id
+          in: path
+          description: 'ID of the trail or location point'
+          required: true
+          schema:
+            type: integer
+        - name: type
+          in: query
+          description: 'Type of the entity to search for'
+          required: true
+          schema:
+            type: string
+            enum:
+              - trail
+              - location_point
+      responses:
+        '200':
+          description: 'Successfully retrieved list of trails or location points'
+        '400':
+          description: 'Request failed, please retry.'
   

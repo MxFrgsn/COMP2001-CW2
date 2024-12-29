@@ -1,8 +1,10 @@
-from flask import abort, make_response, request
+from flask import abort, make_response, request, session
 from config import db
 from models import Attraction, attraction_schema, attractions_schema, TrailAttraction
 
 def create():
+    if session.get('role') != 'admin':
+        return make_response(f"Attraction cannot be created, currently authenicated user {session.get('user_id')} is not an admin.", 400)
     attraction_data = request.get_json()  
     attraction_id = attraction_data.get('attraction_id')
     existing_attraction = Attraction.query.filter(Attraction.attraction_id == attraction_id).one_or_none()
@@ -16,6 +18,8 @@ def create():
         abort(406, f"Attraction with attraction ID {attraction_id} already exists")
         
 def delete(attraction_id): 
+    if session.get('role') != 'admin':
+        return make_response(f"Attraction cannot be deleted, currently authenicated user {session.get('user_id')} is not an admin.", 400)
     existing_attraction = Attraction.query.filter(Attraction.attraction_id == attraction_id).one_or_none()
     existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.attraction_id == attraction_id).all()
     if existing_attraction:
@@ -42,6 +46,8 @@ def read_one(attraction_id):
         abort(404, f"Attraction with attraction ID {attraction_id} not found")
 
 def update(attraction_id):
+    if session.get('role') != 'admin':
+        return make_response(f"Attraction cannot be updated, currently authenicated user {session.get('user_id')} is not an admin.", 400)
     attraction_data = request.get_json()  
     existing_attraction = Attraction.query.filter(Attraction.attraction_id == attraction_id).one_or_none()
     if existing_attraction:
