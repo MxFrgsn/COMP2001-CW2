@@ -13,7 +13,10 @@ def create():
 def read_one(trail_id):
     trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
     if trail is not None:
-        return trail_schema.dump(trail)
+        trail_data = trail_schema.dump(trail)
+        attractions = [attraction.attraction_name for attraction in trail.attractions]
+        trail_data['attractions'] = attractions
+        return trail_data
     else:
         abort(404, f"Trail with trail_id {trail_id} not found")
 

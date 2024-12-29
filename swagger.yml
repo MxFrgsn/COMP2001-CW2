@@ -285,7 +285,7 @@ paths:
           description: Trail not found
   /authenicate:
     post: 
-      operationId: 'user.authenication'
+      operationId: 'user.authentication'
       tags:
         - 'users'
       summary: Logins a user using univeristy auth API
@@ -314,7 +314,7 @@ paths:
         '200':
           description: Successfully retrieved list of users
         '400':
-          description: Request failed, please retry.
+          description:  Request failed, please retry.
     post:
       operationId: 'user.create'
       tags:
@@ -417,7 +417,7 @@ paths:
           description: 'Trail or attraction not found'
   /trail_attraction/{trail_id}/all:
     delete:
-      operationId: 'trail_attraction.delete_all'
+      operationId: 'trail_attraction.delete_all_tied_to_trail'
       tags:
         - 'trail_attraction'
       summary: 'Delete all attractions tied to a trail'

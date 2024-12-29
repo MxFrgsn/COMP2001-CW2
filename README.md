@@ -4,7 +4,7 @@
 ## Project Description:
 The **Trail Microservice** is a well-being-focused outdoor trail application designed to enhance user exploration and outdoor experiences. The service allows users to manage trails by creating, viewing, and interacting with all trail information, ensuring a seamless and efficient experience for outdoor enthusiasts.
 
- This GitHub repository contains the complete backend implementation of the service, developed using Python and documented with Swagger using Mircosoft SQL for data management.
+This GitHub repository contains the backend implementation of the service, developed using Python and documented with Swagger using Mircosoft SQL for data management.
 
 ## Installation Instructions: 
 

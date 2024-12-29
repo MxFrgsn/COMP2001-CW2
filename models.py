@@ -181,7 +181,7 @@ class TrailAttraction(db.Model):
     trail_id = db.Column(db.Integer, db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
 
     Attraction = db.relationship('Attraction', backref='trail_attractions')
-    Trail = db.relationship('Trail', backref= 'trail_attractions')
+    Trail = db.relationship('Trail', backref='trail_attractions')
 
 class TrailSchema(ma.SQLAlchemyAutoSchema):
     trail_id = fields.Integer()

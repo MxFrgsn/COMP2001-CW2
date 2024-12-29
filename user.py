@@ -1,5 +1,5 @@
 # user.py
-from flask import abort, make_response, request
+from flask import abort, make_response, request, session
 from config import db
 from models import users_schema, user_schema, User, Trail
 import requests
@@ -34,6 +34,9 @@ def read_all(name=None):
 
 def update(user_id):
     # Patch is used instead of put, as put updates all fields, patch only updates the fields that are included in the request body
+    if session.get('user_id') != user_id and session.get('role') != 'admin':
+        return make_response(f"User {user_id} cannot be updated, currently authenicated user {session.get('user_id')} is not an admin.", 400)
+    
     user_data = request.get_json()  
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
     
@@ -55,31 +58,48 @@ def update(user_id):
 def delete(user_id): 
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
     trails = Trail.query.filter(Trail.owner_id == user_id).all()
-
-    if user_id == "USR00001":
+    if not session.get('user_id'):
+        return make_response(f"User with user ID {user_id} cannot be deleted, no user is currently logged in.", 400)
+    elif session['role'] != 'admin':
+        return make_response(f"User with user ID {user_id} cannot be deleted, user is not an admin.", 400)
+    elif session['user_id'] == user_id:
+        return make_response(f"User with user ID {user_id} cannot be deleted, it is currently logged in.", 400)
+    if user_id == 1:
         return make_response(f"User with user ID {user_id} cannot be deleted, it is admin.", 400)
     elif existing_user:
         for trail in trails:
-            trail.owner_id = "USR00001"
+            trail.owner_id = 1
             db.session.add(trail)
         db.session.commit()
-
         db.session.delete(existing_user)
         db.session.commit()
         return make_response(f"User with user ID {user_id} has been deleted", 200)
     else:
         abort(404, f"User with user ID {user_id} not found")
 
-def authenication():
+def authentication():
     auth_url = 'https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users'
     user_data = request.get_json()  
+
+    if not user_data or 'email' not in user_data or 'password' not in user_data:
+        return make_response("Missing email or password in request.", 400)
+    
     credentials = {'email': user_data['email'], 'password': user_data['password']}
-    response = requests.post(auth_url, json=credentials)
-    if response.status_code == 200:
-        try:
-            return make_response(f"Authenticated request sent successfully, are you logged in? \n{response.text}",200)
-        except requests.JSONDecodeError:
-            return make_response(404,f"Response is not valid JSON. Raw response content: {response.text} \nPlease try again")
-    else:
-        return make_response(404,f"Authentication failed {response.text} \nPlease try again")
+    try:
+        response = requests.post(auth_url, json=credentials)
+        response.raise_for_status() 
+        
+        if response.json() == ["Verified", "True"]:  
+            logged_in_user = User.query.filter(User.email == user_data['email']).one_or_none()
+            if not logged_in_user:
+                return make_response("User not found in the local database.", 404)
+            session['user_id'] = logged_in_user.user_id
+            session['role'] = logged_in_user.role
+            return make_response(f"Authenticated successfully. User ID: {logged_in_user.user_id}", 200)
+        else:
+            return make_response("Authentication failed. Invalid credentials.", 401)
+    except requests.exceptions.RequestException as e:
+        return make_response(f"Error communicating with authentication service: {str(e)}", 500)
+    except Exception as e:
+        return make_response(f"An unexpected error occurred: {str(e)}", 500)
 

@@ -33,7 +33,7 @@ def read_all():
     trail_attractions = db.session.query(TrailAttraction).all() 
     return trail_attractions_schema.dump(trail_attractions)
 
-def delete_all(trail_id):    
+def delete_all_tied_to_trail(trail_id):    
     existing_trail_attractions = TrailAttraction.query.filter(TrailAttraction.trail_id == trail_id).all()
     if existing_trail_attractions:
         for attraction in existing_trail_attractions:
