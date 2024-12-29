@@ -19,7 +19,7 @@ def create():
         db.session.commit()
         return trail_locationpt_schema.dump(new_trail_locationpt), 201
     else:
-        abort(406, f"Trail Location Point with trail location point ID {trail_locationpt_id} already exists")
+        abort(406, f"Trail Location Point with trail id {trail_id}  and attraction id {attraction_id} already exists.")
 
 def read_locationpts_or_trails(id, type): 
     if type == 'trail':
