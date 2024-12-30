@@ -45,6 +45,7 @@ class TrailLocationPt(db.Model):
     __table_args__ = ({'schema': 'CW2'})
     trail_id = db.Column(db.Integer, db.ForeignKey('CW2.Trail.trail_id'), nullable=False, primary_key=True)
     location_point_id = db.Column(db.Integer, db.ForeignKey('CW2.Location_Point.location_point_id'), nullable=False, primary_key=True)
+    order_number = db.Column(db.Integer, nullable=False)
     
     linked_trail_points = db.relationship("Trail", back_populates="trail_location_points")
     linked_location_points = db.relationship("LocationPoint", back_populates="location_points")
@@ -198,11 +199,13 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
     duration = fields.String()
     elevation_gain = fields.Integer()  
     route_type = fields.String()  
+    owner_id = fields.Integer()
     owner = fields.Nested('UserSchema')
     class Meta:
         model = Trail
         load_instance = True
         sqla_session = db.session
+        exclude = ['owner.user_id']
 
 class LimitedTrailSchema(ma.SQLAlchemyAutoSchema):
     trail_name = fields.String()
@@ -215,12 +218,13 @@ class LimitedTrailSchema(ma.SQLAlchemyAutoSchema):
     duration = fields.String()
     elevation_gain = fields.Integer()  
     route_type = fields.String()  
+    owner_id = fields.Integer()
     owner = fields.Nested('UserSchema')
     class Meta:
         model = Trail
         load_instance = True
         sqla_session = db.session
-        exclude = ['trail_id','owner.user_id', 'owner.email', 'owner.password', 'owner.role']
+        exclude = ['trail_id', 'owner.user_id','owner.email', 'owner.password', 'owner.role']
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     user_id = fields.Integer()
@@ -233,6 +237,15 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
 
+class LimitedUserSchema(ma.SQLAlchemyAutoSchema):
+    user_id = fields.Integer()
+    username = fields.String()
+    role = fields.String()
+    class Meta:
+        model = User
+        load_instance = True
+        sqla_session = db.session
+        exclude = ['email', 'password']
 class LocationPointSchema(ma.SQLAlchemyAutoSchema):
     location_point_id = fields.Integer()
     latitude = fields.Float()
@@ -261,6 +274,7 @@ class TrailAttractionSchema(ma.SQLAlchemyAutoSchema):
 class TrailLocationPtSchema(ma.SQLAlchemyAutoSchema):
     trail_id = fields.Integer()
     location_point_id = fields.Integer()
+    order_number = fields.Integer()
     class Meta:
         model = TrailLocationPt
         load_instance = True
@@ -286,4 +300,7 @@ trail_attractions_schema = TrailAttractionSchema(many=True)
 
 trail_locationpt_schema = TrailLocationPtSchema()
 trail_locationpts_schema = TrailLocationPtSchema(many=True)
+
+limited_user_schema = LimitedUserSchema()
+limited_users_schema = LimitedUserSchema(many=True)
 

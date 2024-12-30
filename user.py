@@ -1,7 +1,7 @@
 # user.py
 from flask import abort, make_response, request, session
 from config import db
-from models import users_schema, user_schema, User, Trail
+from models import users_schema, user_schema, User, Trail, limited_user_schema
 import requests
 
 def create():
@@ -19,8 +19,10 @@ def create():
 
 def read_one(user_id):
     user = User.query.filter(User.user_id == user_id).one_or_none()
-    if user is not None:
+    if user is not None and session.get('role') == 'admin':
         return user_schema.dump(user)
+    elif user is not None and session.get('role') != 'admin':
+        return limited_user_schema.dump(user)
     else:
         abort(404, f"User with user ID {user_id} not found")
 
@@ -29,8 +31,10 @@ def read_all(name=None):
     if name:
         query = query.filter(User.trail_name.ilike(f"%{name}%"))
     users = query.all()
-    return users_schema.dump(users)
-
+    if session.get('role') != 'admin':
+        return limited_users_schema.dump(users)
+    else:
+         return users_schema.dump(users)
 
 def update(user_id):
     # Patch is used instead of put, as put updates all fields, patch only updates the fields that are included in the request body
@@ -56,17 +60,16 @@ def update(user_id):
         abort(404, f"User with ID {user_id} not found")
     
 def delete(user_id): 
-    if session.get('role') != 'admin' and session.get('user_id') != user_id:
-        return make_response(f"User with user ID {user_id} cannot be deleted, currently authenicated user {session.get('user_id')} is not an admin.", 400)
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
     trails = Trail.query.filter(Trail.owner_id == user_id).all()
 
-    if session['role'] != 'admin':
-        return make_response(f"User with user ID {session['user_id']} cannot be deleted, only admins are allowed to delete users.", 400)
-    elif not session.get('user_id') or session['user_id'] != user_id:
-        return make_response(f"User with user ID {user_id} cannot be deleted, no user is currently logged in or the user is trying to delete someone else.", 400)
-    
+    if not session.get('user_id'):
+        return make_response("No user is currently logged in.", 400)
+    if session['user_id'] != user_id and session['role'] != 'admin':
+        return make_response(f"User with ID {user_id} cannot be deleted. Only the user themselves or an admin can delete.", 403)
+
     if existing_user:
+        # Maintains referential integrity by setting the owner_id of all trails owned by the user to 1 (admin)
         for trail in trails:
             trail.owner_id = 1
             db.session.add(trail)

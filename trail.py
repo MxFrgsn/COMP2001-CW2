@@ -5,10 +5,14 @@ from models import trail_schema, trails_schema, Trail, limited_trails_schema, li
 
 def create(): 
     trail_data = request.get_json()  
+    if session.get('user_id') is None:
+        return make_response("User is not authenticated")
+    elif session.get('role') != 'admin':
+       trail_data['owner_id'] = session.get('user_id')
     new_trail = trail_schema.load(trail_data, session=db.session)
     db.session.add(new_trail)
     db.session.commit()
-    return trail_schema.dump(new_trail)
+    return make_response(f"Trail created successfully", 201)
 
 def read_one(trail_id):
     trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
@@ -31,37 +35,34 @@ def read_all(name=None):
 def update(trail_id):
     trail_data = request.get_json()  
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
-    print(session.get('role'))
+    if existing_trail is None:
+        abort(404, f"Trail with trail_id {trail_id} not found")
     if session.get('role') != 'admin' and session.get('user_id') != existing_trail.owner_id:
         return make_response(f"Trail {trail_id} cannot be updated, currently authenicated user {session.get('user_id')} is not the owner of the trail.", 400)
-    
-    if existing_trail:
-        # Update only the fields that were included in the request body
-        if 'trail_name' in trail_data:
-            existing_trail.trail_name = trail_data['trail_name']
-        if 'difficulty' in trail_data:
-            existing_trail.difficulty = trail_data['difficulty']
-        if 'length' in trail_data:
-            existing_trail.length = trail_data['length']
-        if 'traffic' in trail_data:
-            existing_trail.traffic = trail_data['traffic']
-        if 'duration' in trail_data:
-            existing_trail.duration = trail_data['duration']
-        if 'elevation_gain' in trail_data:
-            existing_trail.elevation_gain = trail_data['elevation_gain']
-        if 'route_type' in trail_data:
-            existing_trail.route_type = trail_data['route_type']
-        if 'summary' in trail_data:
-            existing_trail.summary = trail_data['summary']
-        if 'description' in trail_data:
-            existing_trail.description = trail_data['description']
-        if 'location' in trail_data:
-            existing_trail.location = trail_data['location']
-        
-        db.session.commit()
-        return make_response(f"trail with ID {trail_id} has been updated successfully.", 200)
-    else:
-        abort(404, f"trail with ID {trail_id} not found")
+    # Update only the fields that were included in the request body
+    if 'trail_name' in trail_data:
+        existing_trail.trail_name = trail_data['trail_name']
+    if 'difficulty' in trail_data:
+        existing_trail.difficulty = trail_data['difficulty']
+    if 'length' in trail_data:
+        existing_trail.length = trail_data['length']
+    if 'traffic' in trail_data:
+        existing_trail.traffic = trail_data['traffic']
+    if 'duration' in trail_data:
+        existing_trail.duration = trail_data['duration']
+    if 'elevation_gain' in trail_data:
+        existing_trail.elevation_gain = trail_data['elevation_gain']
+    if 'route_type' in trail_data:
+        existing_trail.route_type = trail_data['route_type']
+    if 'summary' in trail_data:
+        existing_trail.summary = trail_data['summary']
+    if 'description' in trail_data:
+        existing_trail.description = trail_data['description']
+    if 'location' in trail_data:
+        existing_trail.location = trail_data['location']
+    db.session.commit()
+    return make_response(f"trail with ID {trail_id} has been updated successfully.", 200)
+
 
 def delete(trail_id): 
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()

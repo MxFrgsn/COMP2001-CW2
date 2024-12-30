@@ -6,8 +6,8 @@ from models import trail_locationpt_schema, trail_locationpts_schema, TrailLocat
 def create():
     trail_locationpt_data = request.get_json()  
     trail_id = trail_locationpt_data.get('trail_id') 
-    attraction_id = trail_locationpt_data.get('attraction_id')
-    existing_trail_locationpt = TrailLocationPt.query.filter(TrailLocationPt.trail_id == trail_id,TrailLocationPt.attraction_id== attraction_id).one_or_none()
+    location_point_id = trail_locationpt_data.get('location_point_id')
+    existing_trail_locationpt = TrailLocationPt.query.filter(TrailLocationPt.trail_id == trail_id,TrailLocationPt.location_point_id== location_point_id).one_or_none()
     existing_trial = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
 
     if existing_trial.owner_id != session.get('user_id') and session.get('role') != 'admin':
@@ -19,7 +19,7 @@ def create():
         db.session.commit()
         return trail_locationpt_schema.dump(new_trail_locationpt), 201
     else:
-        abort(406, f"Trail Location Point with trail id {trail_id}  and attraction id {attraction_id} already exists.")
+        abort(406, f"Trail Location Point with trail id {trail_id}  and location point id  {location_point_id} already exists.")
 
 def read_locationpts_or_trails(id, type): 
     if type == 'trail':
@@ -43,6 +43,7 @@ def delete_all_tied_to_trail(trail_id):
 
     if session.get('role') != 'admin' and session.get('user_id') != owner_id:
         return make_response(f"Trail Location Point cannot be deleted, currently authenicated user {session.get('user_id')} is not an admin or the owner of the trail {trail_id}.", 400)
+    
     if existing_trail_locationpts:
         for trail_locationpt in existing_trail_locationpts:
             db.session.delete(trail_locationpt)
@@ -56,28 +57,40 @@ def read_all():
     trail_locationpts = TrailLocationPt.query.all()
     return trail_locationpts_schema.dump(trail_locationpts)
 
-def update(trail_locationpt_id):
+def update(trail_id, location_point_id):
     trail_locationpt_data = request.get_json()  
-    existing_trail_locationpt = TrailLocationPt.query.filter(TrailLocationPt.trail_locationpt_id == trail_locationpt_id).one_or_none()
-    
-    if existing_trail_locationpt:
-        if 'trail_id' in trail_locationpt_data:
-            existing_trail_locationpt.trail_id = trail_locationpt_data['trail_id']
-        if 'location_point_id' in trail_locationpt_data:
-            existing_trail_locationpt.location_point_id = trail_locationpt_data['location_point_id']
-        if 'order_number' in trail_locationpt_data:
-            existing_trail_locationpt.order_number = trail_locationpt_data['order_number']
-        db.session.commit()
-        return make_response(f"Trail Location Point with ID {trail_locationpt_id} has been updated successfully.", 200)
+    existing_trail_locationpt = TrailLocationPt.query.filter(TrailLocationPt.trail_id == trail_id == trail_id, TrailLocationPt.location_point_id == location_point_id).one_or_none()
+    owner_id = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
+    if owner_id:
+        owner_id = owner_id.owner_id
     else:
-        abort(404, f"Trail Location Point with ID {trail_locationpt_id} not found")
+        abort(404, f"Trail ID {trail_id} not found")
 
-def delete(trail_locationpt_id):
-    existing_trail_locationpt = TrailLocationPt.query.filter(TrailLocationPt.trail_locationpt_id == trail_locationpt_id).one_or_none()
+    if session.get('role') != 'admin' and session.get('user_id') != owner_id:
+        return make_response(f"Trail Location Point cannot be udpated, currently authenicated user {session.get('user_id')} is not an admin or the owner of the trail {trail_id}.", 400)
+   
+    if existing_trail_locationpt:
+        existing_trail_locationpt.order_number = trail_locationpt_data['order_number']
+        db.session.commit()
+        return make_response(f"Trail Location point with trail id {trail_id} and location point id {location_point_id} has been updated successfully.", 200)
+    else:
+        abort(404, f"Trail Location point with trail id {trail_id} and location point id {location_point_id} not found")
+
+def delete(trail_id, location_point_id):
+    existing_trail_locationpt = TrailLocationPt.query.filter(TrailLocationPt.trail_id == trail_id == trail_id, TrailLocationPt.location_point_id == location_point_id).one_or_none()
+    owner_id = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
+    if owner_id:
+        owner_id = owner_id.owner_id
+    else:
+        abort(404, f"Trail ID {trail_id} not found")
+
+    if session.get('role') != 'admin' and session.get('user_id') != owner_id:
+        return make_response(f"Trail Location Point cannot be deleted, currently authenicated user {session.get('user_id')} is not an admin or the owner of the trail {trail_id}.", 400)
+   
     if existing_trail_locationpt:
         db.session.delete(existing_trail_locationpt)
         db.session.commit()
-        return make_response(f"Trail Location Point with trail location point ID {trail_locationpt_id} has been deleted", 200)
+        return make_response(f"Trail Location point with trail id {trail_id} and location point id {location_point_id} has been deleted", 200)
     else:
-        abort(404, f"Trail Location Point with trail location point ID {trail_locationpt_id} not found")
+        abort(404, f"Trail Location point with trail id {trail_id} and location point id {location_point_id} not found")
 

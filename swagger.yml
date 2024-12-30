@@ -149,6 +149,11 @@ components:
         location_point_id:
           type: integer
           description: 'Unique identifier of the location point'
+        order_number:
+          type: integer
+          description: 'Order number of the location point in the trail'
+          minimum: 1
+          maximum: 999
     User_Authentication:
       type: object
       required:
@@ -164,6 +169,14 @@ components:
           description: 'Password of the user'
           minLength: 8
           maxLength: 255
+    order_number:
+      type: object
+      properties:
+        order_number:
+          type: integer
+          description: Order number for the trail location point
+      required:
+        - order_number
   parameters:
     trail_id:
       name: 'trail_id'
@@ -639,6 +652,25 @@ paths:
           description: 'Location point successfully deleted'
         '404':
           description: 'Trail or location point not found'
+    patch:
+      operationId: 'trail_locationpt.update'
+      tags:
+        - 'trail_locationpt'
+      summary: Update a trail location point order number
+      parameters:
+        - $ref: '#/components/parameters/trail_id'
+        - $ref: '#/components/parameters/location_point_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order_number'
+      responses:
+        '200':
+          description: Trail location point updated successfully
+        '404':
+          description: Trail location point not found
   /trail_locationpt/{trail_id}/all:
     delete:
       operationId: 'trail_locationpt.delete_all_tied_to_trail'
@@ -684,4 +716,5 @@ paths:
           description: 'Successfully retrieved list of trails or location points'
         '400':
           description: 'Request failed, please retry.'
+    
   
