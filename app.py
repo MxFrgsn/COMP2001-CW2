@@ -29,10 +29,10 @@ if __name__ == '__main__':
 # MS SQL Server 
 # The host URL is: DIST-6-505.uopnet.plymouth.ac.uk 
 # Your Database is: COMP2001_MFerguson
-# Your Username is:MFerguson
+# Your Username is: MFerguson
 # Your Password is: GjiF140*
 
+# GitHub Repository: https://github.com/MxFrgsn/COMP2001-CW2
 # Docker Image: mxfrgsn/comp2001_cw2
 # docker pull mxfrgsn/comp2001_cw2
-# GitHub Repository: https://github.com/MxFrgsn/COMP2001-CW2
 # docker run -p 8000:8000 mxfrgsn/comp2001_cw2
