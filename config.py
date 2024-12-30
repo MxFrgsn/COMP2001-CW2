@@ -18,11 +18,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = ('mssql+pyodbc:///?odbc_connect='
     'Encrypt=Yes;'
     'TrustServerCertificate=Yes;'
 )
-app.config['SECRET_KEY'] = 'secret_key'  # Replace with a secure random key
-app.config['SESSION_TYPE'] = 'filesystem'  # Use server-side sessions
-app.config['SESSION_COOKIE_SECURE'] = True  # Use HTTPS in production
-app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Prevent CSRF attacks
+app.config['SECRET_KEY'] = '!eja3£dsFA#?s2f$214gsFFA*'  
+app.config['SESSION_TYPE'] = 'filesystem'  
+app.config['SESSION_COOKIE_SECURE'] = True 
+app.config['SESSION_COOKIE_HTTPONLY'] = True  
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax' 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 Session(app)
