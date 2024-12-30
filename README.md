@@ -16,16 +16,27 @@ This GitHub repository contains the backend implementation of the service, devel
    ```bash
    docker pull mxfrgsn/comp2001_cw2
    docker run -p 8000:8000 mxfrgsn/comp2001_cw2
+4. Access the API. 
+    - Open your web browser and navigate to: [localhost:8000](localhost:8000)
+    - Or use Postman, Curl, or similar tools to interact with the endpoints.
+
 ### **Alternative Python Installation**:
 1. Clone/download the GitHub folder containing the application.
 2. Install Python:
    - [Download Python](https://www.python.org/downloads/) and follow the installation instructions.
-3. Set up a Python environment using your preferred IDE (e.g., Python IDE, Visual Studio Code).
-4. Navigate to the folder where the `app.py` file is located.
-5. Install required packages from `requirements.txt`:
+3. Install ODBC Driver:
+   - [Download ODBC Driver 18](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver16) and follow the installation instructions.
+4. Set up a Python environment using your preferred IDE (e.g., Python IDE, Visual Studio Code).
+5. Navigate to the folder where the `app.py` file is located.
+6. Install required packages from `requirements.txt`:
    ```bash
    pip install -r requirements.txt
-6. Run `app.py` using your Python environment.
+7. Run `app.py` using your Python environment.
+    ```bash
+    python -m app
+8. Access the API. 
+    - Open your web browser and navigate to: [localhost:8000](localhost:8000)
+    - Or use Postman, Curl, or similar tools to interact with the endpoints.
 
 ## Swagger Documentation:
 
@@ -146,6 +157,28 @@ Endpoints:
 - **Path**: /location_point/{location_point_id}  
   **Description**: Delete a location point by ID.  
   **Method**: `DELETE`  
+
+### Trail Location Points Endpoints
+- **Path**: /trail_locationpt/{trail_id}/{location_point_id}  
+  **Description**: Delete one location point tied to a trail.  
+  **Method**: `DELETE`  
+
+- **Path**: /trail_locationpt/{trail_id}/all  
+  **Description**: Delete all location points tied to a trail.  
+  **Method**: `DELETE`  
+
+- **Path**: /trail_locationpt/{id}  
+  **Description**: Get all location points or trails tied to a trail or location point.  
+  **Method**: `GET`  
+
+- **Path**: /trail_locationpt  
+  **Description**: Get all location points that are tied to a trail.  
+  **Method**: `GET`  
+
+- **Path**: /trail_locationpt/{trail_id}/{location_point_id}  
+  **Description**: Update a trail location point order number.  
+  **Method**: `PATCH`
+
 
 ## User Authentication:
 
