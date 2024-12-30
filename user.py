@@ -1,7 +1,7 @@
 # user.py
 from flask import abort, make_response, request, session
 from config import db
-from models import users_schema, user_schema, User, Trail, limited_user_schema
+from models import users_schema, user_schema, User, Trail, limited_user_schema, limited_users_schema
 import requests
 
 def create():
