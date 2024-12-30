@@ -25,7 +25,7 @@ This GitHub repository contains the backend implementation of the service, devel
 2. Install Python:
    - [Download Python](https://www.python.org/downloads/) and follow the installation instructions.
 3. Install ODBC Driver:
-   - [Download ODBC Driver 18](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver16) and follow the installation instructions.
+   - [Download ODBC Driver 17](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver16) and follow the installation instructions.
 4. Set up a Python environment using your preferred IDE (e.g., Python IDE, Visual Studio Code).
 5. Navigate to the folder where the `app.py` file is located.
 6. Install required packages from `requirements.txt`:
