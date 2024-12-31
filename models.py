@@ -88,7 +88,7 @@ class Trail(db.Model):
     @validates('summary')
     def validate_trail_summary(self, value):
         if len(value) < 10 and len(value)!=0:
-            raise ValidationError('Trail summary must be at least 50')
+            raise ValidationError('Trail summary must be at least 10')
         return value
     
     @validates('description')
@@ -148,7 +148,7 @@ class LocationPoint(db.Model):
     __tablename__ = 'Location_Point'
     __table_args__ = {'schema': 'CW2'}
     location_point_id = db.Column(db.Integer, nullable=False, primary_key=True)
-    latitude = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
+    latitude = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
     longitude = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
     description = db.Column(db.String(255))
 
