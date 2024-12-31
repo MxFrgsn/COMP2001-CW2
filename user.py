@@ -69,10 +69,11 @@ def delete(user_id):
         return make_response(f"User with ID {user_id} cannot be deleted. Only the user themselves or an admin can delete.", 403)
 
     if existing_user:
-        # Maintains referential integrity by setting the owner_id of all trails owned by the user to 1 (admin)
-        for trail in trails:
-            trail.owner_id = 1
-            db.session.add(trail)
+        # Mantains the trails that the user owns
+        if trails:
+            for trail in trails:
+                trail.owner_id = 1
+                db.session.add(trail)
         db.session.commit()
         db.session.delete(existing_user)
         db.session.commit()

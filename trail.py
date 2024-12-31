@@ -39,7 +39,6 @@ def update(trail_id):
         abort(404, f"Trail with trail_id {trail_id} not found")
     if session.get('role') != 'admin' and session.get('user_id') != existing_trail.owner_id:
         return make_response(f"Trail {trail_id} cannot be updated, currently authenicated user {session.get('user_id')} is not the owner of the trail.", 400)
-    # Update only the fields that were included in the request body
     if 'trail_name' in trail_data:
         existing_trail.trail_name = trail_data['trail_name']
     if 'difficulty' in trail_data:
@@ -62,7 +61,6 @@ def update(trail_id):
         existing_trail.location = trail_data['location']
     db.session.commit()
     return make_response(f"trail with ID {trail_id} has been updated successfully.", 200)
-
 
 def delete(trail_id): 
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
