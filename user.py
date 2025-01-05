@@ -60,6 +60,8 @@ def update(user_id):
         abort(404, f"User with ID {user_id} not found")
     
 def delete(user_id): 
+    if user_id == 1:
+        return make_response(f"User with ID {user_id} cannot be deleted. This is the default admin user.", 403)
     existing_user = User.query.filter(User.user_id == user_id).one_or_none()
     trails = Trail.query.filter(Trail.owner_id == user_id).all()
 
@@ -85,9 +87,6 @@ def authentication():
     auth_url = 'https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users'
     user_data = request.get_json()  
 
-    if not user_data or 'email' not in user_data or 'password' not in user_data:
-        return make_response("Missing email or password in request.", 400)
-    
     credentials = {'email': user_data['email'], 'password': user_data['password']}
     try:
         response = requests.post(auth_url, json=credentials)
