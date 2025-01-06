@@ -1,5 +1,5 @@
 
-# COMP2001 CW2 - Trail App Micro-Service
+# COMP2001 CW2 - Trail App - Trail Microservice
 
 ## Project Description:
 The **Trail Microservice** is a well-being-focused outdoor trail application designed to enhance user exploration and outdoor experiences. The service allows users to manage trails by creating, viewing, and interacting with all trail information, ensuring a seamless and efficient experience for outdoor enthusiasts.
@@ -7,6 +7,8 @@ The **Trail Microservice** is a well-being-focused outdoor trail application des
 This GitHub repository contains the backend implementation of the service, developed using Python and documented with Swagger using Mircosoft SQL for data management.
 
 ## Installation Instructions: 
+
+Connect to the Univerisity of Plymouth WIFI (UOP-Connect/Eduroam/UOP-Visitor) or make a digital connection to the University through the FortiClient VPN.
 
 ### **Docker Installation**:
 1. Install Docker:
