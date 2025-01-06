@@ -268,7 +268,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/trail_id'
       responses:
-        '204':
+        '200':
           description: Trail deleted successfully
         '404':
           description: Trail not found
@@ -359,7 +359,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/user_id'
       responses:
-        '204':
+        '200':
           description: User deleted successfully
         '404':
           description: User not found
@@ -535,7 +535,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/attraction_id'
       responses:
-        '204':
+        '200':
           description: Attraction deleted successfully
         '404':
           description: Attraction not found
@@ -589,7 +589,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/location_point_id'
       responses:
-        '204':
+        '200':
           description: Location point deleted successfully
         '404':
           description: Location point not found
@@ -648,7 +648,7 @@ paths:
         - $ref: '#/components/parameters/trail_id'
         - $ref: '#/components/parameters/location_point_id'
       responses:
-        '204':
+        '200':
           description: 'Location point successfully deleted'
         '404':
           description: 'Trail or location point not found'

@@ -186,13 +186,13 @@ Endpoints:
 
 Use the following credentials to test the user authentication API:
 - Grace Hopper: 
-  - email: grace@plymouth.ac.uk, 
+  - email: grace@plymouth.ac.uk
   - password: ISAD123!
 - Tim Berners-Lee: 
-  - tim@plymouth.ac.uk, 
+  - tim@plymouth.ac.uk
   - password: COMP2001!
 - Ada Lovelace: 
-  - email: ada@plymouth.ac.uk,
+  - email: ada@plymouth.ac.uk
   - password: insecurePassword
 
 Contact Information: 
